@@ -1,9 +1,13 @@
 {
-  "runOnSave.commands": [
-    {
-      "match": "\\.sv$",
-      "isAsync": true,
-      "cmd": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/.vscode/auto-commit.ps1\" -SavedFile \"${file}\""
-    }
-  ]
+  "emeraldwalk.runonsave": {
+    "shell": "powershell.exe",
+    "commands": [
+      {
+        "match": "\\.sv$",
+        "isAsync": true,
+        "cmd": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/.vscode/auto-commit.ps1\" -SavedFile \"${file}\"",
+        "message": "Auto-committing ${fileBasename}..."
+      }
+    ]
+  }
 }
