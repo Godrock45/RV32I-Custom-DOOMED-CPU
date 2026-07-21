@@ -26,17 +26,15 @@ always_comb begin
         end
         7'b0010011:begin    //I type Instructions
             funct3= instruction[14:12];
-            rd=instruction[11:7];
             rs1=instruction[19:15];
             rs2=instruction[24:20];
             imm={{20{instruction[31]}},instruction[31:20]};
         end
         7'b1100011:begin    //B type Instructions
             funct3= instruction[14:12];
-            rd=instruction[11:7];
             rs1=instruction[19:15];
             rs2=instruction[24:20];
-            imm={{19{instruction[31]}}, instruction[31], instruction[7], instruction[30:25], instruction[11:8], 1'b0};
+            imm={{19{instruction[31]}},instruction[7],instruction[30:25], instruction[11:8], 1'b0};
         end
         7'b0100011:begin    //S type Instructions
             funct3=instruction[14:12];
