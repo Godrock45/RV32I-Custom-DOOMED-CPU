@@ -52,6 +52,16 @@ always_comb begin
             imm={instruction[31:12],12'b0};
             rd=instruction[11:7];
         end
+        7'b0010111:begin  // U type for AUIPC instruction
+            imm={instruction[31:12],12'b0};
+            rd=instruction[11:7];
+        end
+        7'b01100111:begin  // I type for JALR instruction
+            funct3= instruction[14:12];
+            rd=instruction[11:7];
+            rs1=instruction[19:15];
+            imm={{20{instruction[31]}},instruction[31:20]};
+        end
         default: begin
             rd=5'd0;
             rs1=5'd0;
