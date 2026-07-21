@@ -32,9 +32,11 @@ try {
     git commit -m "Auto-commit: $name"
     if (-not $?) { Write-Log "commit failed"; exit 1 }
 
-    $out = git push 2>&1
+    # No 2>&1 here: git writes normal progress to stderr, and redirecting it
+    # in PowerShell 5.1 turns that into a terminating error on success.
+    git push
     if ($LASTEXITCODE -ne 0) {
-        Write-Log "push failed for $name : $out"
+        Write-Log "push failed for $name (exit $LASTEXITCODE)"
         exit 1
     }
     Write-Log "pushed $name"
