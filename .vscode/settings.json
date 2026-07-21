@@ -1,0 +1,9 @@
+{
+  "runOnSave.commands": [
+    {
+      "match": "\\.sv$",
+      "isAsync": true,
+      "cmd": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/.vscode/auto-commit.ps1\" -SavedFile \"${file}\""
+    }
+  ]
+}

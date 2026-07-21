@@ -1,9 +1,0 @@
-   {
-     "runOnSave.commands": [
-       {
-         "match": ".*\\.sv$",
-         "isAsync": true,
-         "cmd": "cd ${workspaceFolder} && git add -A && git commit -m 'Auto-commit: ${file}' --allow-empty && git push"
-       }
-     ]
-   }
