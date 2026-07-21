@@ -8,159 +8,161 @@ R Type Instructions:
 Instruction 1: ADD
   Mnemonic: ADD rd, rs1, rs2
   Opcode bits: 0x33 (7 bits)
-  Format: [funct7(7)=0000000][rs2(5)][rs1(5)][funct3(3)=000][rd(5)][opcode(7)]
+  Format: [funct7(31:25)][rs2(24:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
   Example: ADD R1, R2, R3
 
 Instruction 2: SUB
   Mnemonic: SUB rd, rs1, rs2
   Opcode bits: 0x33 (7 bits)
-  Format: [funct7(7)=0100000][rs2(5)][rs1(5)][funct3(3)=000][rd(5)][opcode(7)]
+  Format: [funct7(31:25)][rs2(24:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
   Example: SUB R1, R2, R3
 
 Instruction 3: AND
   Mnemonic: AND rd, rs1, rs2
   Opcode bits: 0x33 (7 bits)
-  Format: [funct7(7)=0000000][rs2(5)][rs1(5)][funct3(3)=111][rd(5)][opcode(7)]
+  Format: [funct7(31:25)][rs2(24:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 4: XOR
   Mnemonic: XOR rd, rs1, rs2
   Opcode bits: 0x33 (7 bits)
-  Format: [funct7(7)=0000000][rs2(5)][rs1(5)][funct3(3)=100][rd(5)][opcode(7)]
+  Format: [funct7(31:25)][rs2(24:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 5: OR
   Mnemonic: OR rd, rs1, rs2
   Opcode bits: 0x33 (7 bits)
-  Format: [funct7(7)=0000000][rs2(5)][rs1(5)][funct3(3)=110][rd(5)][opcode(7)]
+  Format: [funct7(31:25)][rs2(24:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 6: SLL
   Mnemonic: SLL rd, rs1, rs2
   Opcode bits: 0x33 (7 bits)
-  Format: [funct7(7)=0000000][rs2(5)][rs1(5)][funct3(3)=001][rd(5)][opcode(7)]
+  Format: [funct7(31:25)][rs2(24:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 7: SRL
   Mnemonic: SRL rd, rs1, rs2
   Opcode bits: 0x33 (7 bits)
-  Format: [funct7(7)=0000000][rs2(5)][rs1(5)][funct3(3)=101][rd(5)][opcode(7)]
+  Format: [funct7(31:25)][rs2(24:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 8: SRA
   Mnemonic: SRA rd, rs1, rs2
   Opcode bits: 0x33 (7 bits)
-  Format: [funct7(7)=0100000][rs2(5)][rs1(5)][funct3(3)=101][rd(5)][opcode(7)]
+  Format: [funct7(31:25)][rs2(24:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 I Type Instructions:
 
 Instruction 1: ADDI
   Mnemonic: ADDI rd, rs1, imm[11:0]
   Opcode bits: 0x13 (7 bits)
-  Format: [imm(12)][rs1(5)][funct3(3)=000][rd(5)][opcode(7)]
+  Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 2: ANDI
   Mnemonic: ANDI rd, rs1, imm[11:0]
   Opcode bits: 0x13 (7 bits)
-  Format: [imm(12)][rs1(5)][funct3(3)=111][rd(5)][opcode(7)]
+  Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 3: ORI
   Mnemonic: ORI rd, rs1, imm[11:0]
   Opcode bits: 0x13 (7 bits)
-  Format: [imm(12)][rs1(5)][funct3(3)=110][rd(5)][opcode(7)]
+  Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 4: XORI
   Mnemonic: XORI rd, rs1, imm[11:0]
   Opcode bits: 0x13 (7 bits)
-  Format: [imm(12)][rs1(5)][funct3(3)=100][rd(5)][opcode(7)]
+  Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 5: SLLI
   Mnemonic: SLLI rd, rs1, imm[4:0]
   Opcode bits: 0x13 (7 bits)
-  Format: [funct7(7)=0000000][imm[4:0](5)][rs1(5)][funct3(3)=001][rd(5)][opcode(7)]
+  Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 6: SRLI
   Mnemonic: SRLI rd, rs1, imm[4:0]
   Opcode bits: 0x13 (7 bits)
-  Format: [funct7(7)=0000000][imm[4:0](5)][rs1(5)][funct3(3)=101][rd(5)][opcode(7)]
+  Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 7: SRAI
   Mnemonic: SRAI rd, rs1, imm[4:0]
   Opcode bits: 0x13 (7 bits)
-  Format: [funct7(7)=0100000][imm[4:0](5)][rs1(5)][funct3(3)=101][rd(5)][opcode(7)]
+  Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 8: LW
   Mnemonic: LW rd, offset(rs1)
   Opcode bits: 0x03 (7 bits)
-  Format: [imm(12)][rs1(5)][funct3(3)=010][rd(5)][opcode(7)]
+  Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 9: LB
   Mnemonic: LB rd, offset(rs1)
   Opcode bits: 0x03 (7 bits)
-  Format: [imm(12)][rs1(5)][funct3(3)=000][rd(5)][opcode(7)]
+  Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 10: LH
   Mnemonic: LH rd, offset(rs1)
   Opcode bits: 0x03 (7 bits)
-  Format: [imm(12)][rs1(5)][funct3(3)=001][rd(5)][opcode(7)]
+ Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
 Instruction 11: JALR
   Mnemonic: JALR rd, offset(rs1)
   Opcode bits: 0x67 (7 bits)
-  Format: [imm(12)][rs1(5)][funct3(3)=000][rd(5)][opcode(7)]
+  Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
+
+U Type Instructions:
 
 Instruction 12: LUI
   Mnemonic: LUI rd, imm[31:12]
   Opcode bits: 0x37 (7 bits)
-  Format: [imm(20)][rd(5)][opcode(7)]
+  Format: [imm(31:12)][rd(11:7)][opcode(6:0)]
 
 S Type Instructions:
 
 Instruction 1: SW
   Mnemonic: SW rs2, offset(rs1)
   Opcode bits: 0x23 (7 bits)
-  Format: [imm[11:5](7)][rs2(5)][rs1(5)][funct3(3)=010][imm[4:0](5)][opcode(7)]
+  Format: [imm[11:5](7)][rs2(24:20)][rs1(19:15)][funct3(14:12)=010][imm[4:0](11:7)][opcode(6:0)]
 
 Instruction 2: SH
   Mnemonic: SH rs2, offset(rs1)
   Opcode bits: 0x23 (7 bits)
-  Format: [imm[11:5](7)][rs2(5)][rs1(5)][funct3(3)=001][imm[4:0](5)][opcode(7)]
+  Format: [imm[11:5](7)][rs2(24:20)][rs1(19:15)][funct3(14:12)=001][imm[4:0](11:7)][opcode(6:0)]
 
 Instruction 3: SB
   Mnemonic: SB rs2, offset(rs1)
   Opcode bits: 0x23 (7 bits)
-  Format: [imm[11:5](7)][rs2(5)][rs1(5)][funct3(3)=000][imm[4:0](5)][opcode(7)]
+  Format: [imm[11:5](7)][rs2(24:20)][rs1(19:15)][funct3(14:12)=000][imm[4:0](11:7)][opcode(6:0)]
 
 B Type Instructions:
 
 Instruction 1: BEQ
   Mnemonic: BEQ rs1, rs2, offset[12:1]
   Opcode bits: 0x63 (7 bits)
-  Format: [imm[12]][imm[10:5](6)][rs2(5)][rs1(5)][funct3(3)=000][imm[4:1](4)][imm[11]][opcode(7)]
+  Format: [imm 12] [imm(30:25)=imm[10:5]][rs2(24:20)][rs1(19:15)][funct3(14:12)][imm[4:1](11:8)][imm[11](7)][opcode(6:0)]
 
 Instruction 2: BNE
   Mnemonic: BNE rs1, rs2, offset[12:1]
   Opcode bits: 0x63 (7 bits)
-  Format: [imm[12]][imm[10:5](6)][rs2(5)][rs1(5)][funct3(3)=001][imm[4:1](4)][imm[11]][opcode(7)]
+  Format: [imm 12] [imm(30:25)=imm[10:5]][rs2(24:20)][rs1(19:15)][funct3(14:12)][imm[4:1](11:8)][imm[11](7)][opcode(6:0)]
 
 Instruction 3: BLT
   Mnemonic: BLT rs1, rs2, offset[12:1]
   Opcode bits: 0x63 (7 bits)
-  Format: [imm[12]][imm[10:5](6)][rs2(5)][rs1(5)][funct3(3)=100][imm[4:1](4)][imm[11]][opcode(7)]
+  Format: [imm 12] [imm(30:25)=imm[10:5]][rs2(24:20)][rs1(19:15)][funct3(14:12)][imm[4:1](11:8)][imm[11](7)][opcode(6:0)]
 
 Instruction 4: BGE
   Mnemonic: BGE rs1, rs2, offset[12:1]
   Opcode bits: 0x63 (7 bits)
-  Format: [imm[12]][imm[10:5](6)][rs2(5)][rs1(5)][funct3(3)=101][imm[4:1](4)][imm[11]][opcode(7)]
+  Format: [imm 12] [imm(30:25)=imm[10:5]][rs2(24:20)][rs1(19:15)][funct3(14:12)][imm[4:1](11:8)][imm[11](7)][opcode(6:0)]
 
 Instruction 5: BLTU
   Mnemonic: BLTU rs1, rs2, offset[12:1]
   Opcode bits: 0x63 (7 bits)
-  Format: [imm[12]][imm[10:5](6)][rs2(5)][rs1(5)][funct3(3)=110][imm[4:1](4)][imm[11]][opcode(7)]
+  Format: [imm 12] [imm(30:25)=imm[10:5]][rs2(24:20)][rs1(19:15)][funct3(14:12)][imm[4:1](11:8)][imm[11](7)][opcode(6:0)]
 
 Instruction 6: BGEU
   Mnemonic: BGEU rs1, rs2, offset[12:1]
   Opcode bits: 0x63 (7 bits)
-  Format: [imm[12]][imm[10:5](6)][rs2(5)][rs1(5)][funct3(3)=111][imm[4:1](4)][imm[11]][opcode(7)]
+  Format: [imm 12] [imm(30:25)=imm[10:5]][rs2(24:20)][rs1(19:15)][funct3(14:12)][imm[4:1](11:8)][imm[11](7)][opcode(6:0)]
 
 J Type Instructions:
 
 Instruction 1: JAL
   Mnemonic: JAL rd, offset[20:1]
   Opcode bits: 0x6F (7 bits)
-  Format: [imm[20]][imm[10:1](10)][imm[11]][imm[19:12](8)][rd(5)][opcode(7)]
+  Format: [inst[20](31)][imm(30:21)[10:1]][imm[11](20)][inst(19:12)=inst[19:12]][Rd(11:7)][opcode(6:0)]
