@@ -69,6 +69,7 @@ Instruction 4: XORI
   Opcode bits: 0x13 (7 bits)
   Format: [imm(31:20)][Rs1(19:15)][funct3(14:12)][Rd(11:7)][opcode(6:0)]
 
+
 Instruction 5: SLLI
   Mnemonic: SLLI rd, rs1, imm[4:0]
   Opcode bits: 0x13 (7 bits)
