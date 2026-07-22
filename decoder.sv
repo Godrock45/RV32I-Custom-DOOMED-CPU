@@ -14,8 +14,8 @@ always_comb begin
     rs2=5'd0;
     funct7=7'd0;
     funct3=3'd0;
-    imm=32'd0; 
-    opcode= instruction[6:0];   
+    imm=32'd0;
+    opcode= instruction[6:0];
     case(opcode)
         7'b0110011: begin  //R type Instructions
             funct7 = instruction[31:25];
@@ -24,11 +24,21 @@ always_comb begin
             rd = instruction[11:7];
             funct3= instruction[14:12];
         end
-        7'b0010011:begin    //I type Instructions
+        // I type: OP-IMM, LOAD, JALR, SYSTEM, FENCE - same field layout
+        7'b0010011,
+        7'b0000011,
+        7'b1100111,
+        7'b1110011,
+        7'b0001111: begin
             funct3= instruction[14:12];
             rd=instruction[11:7];
             rs1=instruction[19:15];
             imm={{20{instruction[31]}},instruction[31:20]};
+            // SLLI/SRLI/SRAI reuse imm[11:5] as a funct7 so the ALU can tell
+            // SRLI from SRAI. shamt is imm[4:0]. For every other I type these
+            // bits are plain immediate data, so funct7 stays 0.
+            if (opcode == 7'b0010011 && (funct3 == 3'b001 || funct3 == 3'b101))
+                funct7 = instruction[31:25];
         end
         7'b1100011:begin    //B type Instructions
             funct3= instruction[14:12];
@@ -46,44 +56,15 @@ always_comb begin
             rd=instruction[11:7];
             imm={{11{instruction[31]}},instruction[31],instruction[19:12],instruction[20],instruction[30:21],1'b0};
         end
-        7'b0110111:begin   //U type Instructions
+        // U type: LUI and AUIPC
+        7'b0110111,
+        7'b0010111:begin
             imm={instruction[31:12],12'b0};
             rd=instruction[11:7];
         end
-        7'b0010111:begin  // U type for AUIPC instruction
-            imm={instruction[31:12],12'b0};
-            rd=instruction[11:7];
-        end
-        7'b1100111:begin  // I type for JALR instruction
-            funct3= instruction[14:12];
-            rd=instruction[11:7];
-            rs1=instruction[19:15];
-            imm={{20{instruction[31]}},instruction[31:20]};
-        end
-        7'b0000011:begin  // I type for Load instructions
-            funct3= instruction[14:12];
-            rd=instruction[11:7];
-            rs1=instruction[19:15];
-            imm={{20{instruction[31]}},instruction[31:20]};
-        end
-        7'b1110011:begin  // I type for ECALL and EBREAK instructions
-            funct3= instruction[14:12];
-            rd=instruction[11:7];
-            rs1=instruction[19:15];
-            imm={{20{instruction[31]}},instruction[31:20]};
-        end
-        7'b
         default: begin
-            rd=5'd0;
-            rs1=5'd0;
-            rs2=5'd0;
-            funct7=7'd0;
-            funct3=3'd0;
-            imm=32'd0;
+            // outputs already cleared above
         end
-
-
-
     endcase
 end
 
