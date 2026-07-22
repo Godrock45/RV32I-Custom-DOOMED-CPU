@@ -60,6 +60,19 @@ always_comb begin
             rs1=instruction[19:15];
             imm={{20{instruction[31]}},instruction[31:20]};
         end
+        7'b0000011:begin  // I type for Load instructions
+            funct3= instruction[14:12];
+            rd=instruction[11:7];
+            rs1=instruction[19:15];
+            imm={{20{instruction[31]}},instruction[31:20]};
+        end
+        7'b1110011:begin  // I type for ECALL and EBREAK instructions
+            funct3= instruction[14:12];
+            rd=instruction[11:7];
+            rs1=instruction[19:15];
+            imm={{20{instruction[31]}},instruction[31:20]};
+        end
+        7'b
         default: begin
             rd=5'd0;
             rs1=5'd0;
