@@ -1,0 +1,1 @@
+ALUctrl={funct7[5],funt3[2:0]};
