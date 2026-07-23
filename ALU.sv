@@ -10,7 +10,7 @@ always_comb begin
     4'b1000: Res=OpA+OpB;                          //ADD
     4'b1001: Res=OpA-OpB;                          //SUB
     4'b0001: Res=OpA << (OpB[4:0]);                //SLL
-    4'b0010: Res={31'b0,$signed(OpA)<$signed(OpB)};//SLT
+    4'b0010: Res=$signed(OpA)<$signed(OpB);        //SLT
     4'b0011: Res=OpA<OpB;                          //SLTU
     4'b0100: Res= OpA^OpB;                         //XOR
     4'b0101: Res= OpA >> OpB[4:0];                 //SRL
@@ -22,9 +22,5 @@ always_comb begin
     endcase
     
 end
-
-
-
-
 
 endmodule
