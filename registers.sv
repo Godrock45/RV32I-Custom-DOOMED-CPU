@@ -13,20 +13,19 @@ logic [31:0] registers[31:0];
 always_comb begin
     rd1=registers[rs1];
     rd2=registers[rs2];
+    registers[0]=32'b0;
 end
-assign registers[0]=32'b0;
+
 
 always_ff @( posedge clk ) begin
     if(rst)begin
-        [31:0] registers<=32'b0;
+        for(int i=0;i<32;i++)begin
+            registers[i]=0;
+        end
     end
-    else if(we) begin
+    else if(we&&rd!=5'b0) begin
         registers[rd]<=wd;
     end
-
-
-    
 end
-
 
 endmodule
