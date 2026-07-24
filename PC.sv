@@ -1,11 +1,11 @@
 module PrgCo(
     input clk,
     input rst,
-    input pc_en;
+    input pc_en,
     input [31:0]next_pc,
     output logic [31:0]pc
 );
-always @(posedge clk ) begin
+always_ff @(posedge clk) begin
     if(rst)begin
         pc<=0;
     end
