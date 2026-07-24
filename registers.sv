@@ -13,14 +13,13 @@ logic [31:0] registers[31:0];
 always_comb begin
     rd1=registers[rs1];
     rd2=registers[rs2];
-    registers[0]=32'b0;
 end
 
 
 always_ff @( posedge clk ) begin
     if(rst)begin
         for(int i=0;i<32;i++)begin
-            registers[i]=0;
+            registers[i]<=0;
         end
     end
     else if(we&&rd!=5'b0) begin
