@@ -7,8 +7,8 @@ module ALU(
 
 always_comb begin
     case(ALUCtrl)
-    4'b1000: Res=OpA+OpB;                          //ADD
-    4'b1001: Res=OpA-OpB;                          //SUB
+    4'b0000: Res=OpA+OpB;                          //ADD
+    4'b1000: Res=OpA-OpB;                          //SUB
     4'b0001: Res=OpA << (OpB[4:0]);                //SLL
     4'b0010: Res=$signed(OpA)<$signed(OpB);        //SLT
     4'b0011: Res=OpA<OpB;                          //SLTU
