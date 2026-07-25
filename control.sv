@@ -43,6 +43,7 @@ always_comb begin
             AluSrc=1;
             RegWrite=1;
             Jump=1;
+            Branch=1;
         end
         7'b1110011:begin
             
@@ -60,7 +61,7 @@ end
 
 
 
-Wrong: taken = Branch & comparator_result → this fires the comparator on JALR (11) too, and you're back to the garbage-rs2 bug.
-Right: taken = (Branch & ~Jump) & comparator_result, or better, a clean case({Branch,Jump})
+//Wrong: taken = Branch & comparator_result → this fires the comparator on JALR (11) too, and you're back to the garbage-rs2 bug.
+//Right: taken = (Branch & ~Jump) & comparator_result, or better, a clean case({Branch,Jump})
 
 endmodule
