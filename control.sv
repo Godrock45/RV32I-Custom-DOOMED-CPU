@@ -6,7 +6,7 @@ module control(
     output logic AluSrc,
     output logic MemRead,
     output logic MemWrite,
-    output logic [1:0]MemToReg,
+    output logic MemToReg,
     output logic [3:0]AluCtrl,
     output logic Branch,
     output logic Jump
@@ -19,7 +19,7 @@ always_comb begin
     MemWrite=0;
     MemToReg=0;
     Branch=0;
-    Jump=0
+    Jump=0;
     case(Opcode)
         7'b0110011:begin
             AluCtrl={funct7[5],funct3};
@@ -60,6 +60,7 @@ end
 
 
 
-
+Wrong: taken = Branch & comparator_result → this fires the comparator on JALR (11) too, and you're back to the garbage-rs2 bug.
+Right: taken = (Branch & ~Jump) & comparator_result, or better, a clean case({Branch,Jump})
 
 endmodule
