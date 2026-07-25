@@ -13,6 +13,7 @@ module control(
 );
 always_comb begin
     RegWrite=0;
+    AluCtrl=4'b1111;
     AluSrc=0;
     MemRead=0;
     MemWrite=0;
@@ -22,7 +23,27 @@ always_comb begin
 
 
     case(Opcode)
-        7'b0110011:
+        7'b0110011:begin
+            AluCtrl={funct7[5],funct3};
+            RegWrite=1;
+            AluSrc=0;
+        end
+        7'b0010011:begin
+            AluCtrl={funct7[5],funct3};
+            RegWrite=1;
+            AluSrc=1;
+        end
+        7'b0000011:begin
+            AluCtrl=4'b0000;
+            RegWrite=1;
+            MemRead=1;
+        end
+        7'b1100111:begin
+            AluCtrl=4'b0000;
+            RegWrite=1;
+            AluSrc=1;
+            Jump=1;
+        end
 
 
 
