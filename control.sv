@@ -36,6 +36,7 @@ always_comb begin
         7'b0000011:begin
             AluCtrl=4'b0000;
             RegWrite=1;
+            MemToReg=1;
             MemRead=1;
         end
         7'b1100111:begin
@@ -43,6 +44,13 @@ always_comb begin
             RegWrite=1;
             AluSrc=1;
             Jump=1;
+        end
+        7'b1110011:begin
+            RegWrite=1;
+        end
+        7'b0001111:begin
+            MemWrite=1;
+            MemRead=1;
         end
 
 
