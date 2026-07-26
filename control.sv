@@ -10,7 +10,7 @@ module control(
     output logic [3:0]AluCtrl,
     output logic Branch,
     output logic Jump,
-    output logic PC_add
+    output loigc [1:0]wb_sel
 );
 always_comb begin
     RegWrite=0;
@@ -43,7 +43,9 @@ always_comb begin
             AluCtrl=4'b0000;
             AluSrc=1;
             RegWrite=1;
+            Branch=1;
             Jump=1;
+            wb_sel=2'b01;
         end
         7'b1110011:begin
             
@@ -53,7 +55,6 @@ always_comb begin
         end
         7'b1100011:begin
             Branch=1;
-            MemRead=1;
         end
         7'b0100011:begin
             AluSrc=1;
@@ -65,15 +66,18 @@ always_comb begin
             AluSrc=1;
             RegWrite=1;
             Jump=1;
-            PC_add=1;
+            wb_sel=2'b00;
         end
         7'b0110111:begin
+
             AluSrc=1;
             RegWrite=1;
+            wb_sel=2'b10;
         end
         7'b0010111:begin
             RegWrite=1;
             PC_add=1;
+            wb_sel=2'b11;
         end
 
 
