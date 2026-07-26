@@ -9,8 +9,8 @@ module control(
     output logic [3:0]AluCtrl,
     output logic Branch,
     output logic Jump,
-    output logic [1:0]wb_sel,
-    output logic Alu_sel,
+    output logic wb_sel,
+    output logic MemToReg;
 );
 always_comb begin
     RegWrite=0;
@@ -20,7 +20,8 @@ always_comb begin
     MemWrite=0;
     Branch=0;
     Jump=0;
-    wb_sel=2'b00;
+    MemToReg=0;
+    wb_sel=0;
     case(Opcode)
         7'b0110011:begin
             AluCtrl={funct7[5],funct3};
@@ -36,7 +37,7 @@ always_comb begin
             AluCtrl=4'b0000;
             AluSrc=1;
             RegWrite=1;
-            wb_sel=2'b10;
+            MemToReg=1;
             MemRead=1;
         end
         7'b1100111:begin            // JALR if JUMP&&RegWrite do rd=PC+4 and load PC with ALU_Res&~1;
@@ -45,8 +46,6 @@ always_comb begin
             RegWrite=1;
             Branch=1;
             Jump=1;
-            wb_sel=2'b01;
-            Alu_sel=1;
         end
         7'b1110011:begin
             
@@ -67,20 +66,17 @@ always_comb begin
             AluSrc=1;
             RegWrite=1;
             Jump=1;
-            wb_sel=2'b01;
-            Alu_sel=1;
         end
         7'b0110111:begin
             AluCtrl=4'b0000;
             AluSrc=1;
             RegWrite=1;
-            Alu_sel=0;
+            wb_sel=0
 
         end
         7'b0010111:begin
             RegWrite=1;
-            wb_sel=2'b11;
-            Alu_sel=0;
+            wb_sel=1
         end
 
 
