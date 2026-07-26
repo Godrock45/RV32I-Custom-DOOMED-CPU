@@ -51,6 +51,24 @@ always_comb begin
         7'b0001111:begin
             
         end
+        7'b1100011:begin
+            Branch=1;
+            MemRead=1;
+        end
+        7'b0100011:begin
+            AluSrc=1;
+            AluCtrl=4'b0000;
+            MemWrite=1;
+        end
+        7'b1101111:begin
+            AluCtrl=4'b0000;
+            AluSrc=1;
+            RegWrite=1;
+            Jump=1;
+        end
+        7'b0110111:begin
+            
+        end
 
 
 
