@@ -21,6 +21,7 @@ always_comb begin
     MemToReg=0;
     Branch=0;
     Jump=0;
+    wb_sel=2'b00;
     case(Opcode)
         7'b0110011:begin
             AluCtrl={funct7[5],funct3};
@@ -66,7 +67,7 @@ always_comb begin
             AluSrc=1;
             RegWrite=1;
             Jump=1;
-            wb_sel=2'b00;
+            wb_sel=2'b01;
         end
         7'b0110111:begin
 
