@@ -9,7 +9,7 @@ module control(
     output logic [3:0]AluCtrl,
     output logic Branch,
     output logic Jump,
-    output logic wb_sel,
+    output logic AluSrcA,
     output logic MemToReg
 );
 always_comb begin
@@ -21,7 +21,7 @@ always_comb begin
     Branch=0;
     Jump=0;
     MemToReg=0;
-    wb_sel=0;
+    AluSrcA=0;
     case(Opcode)
         7'b0110011:begin
             AluCtrl={funct7[5],funct3};
@@ -55,6 +55,10 @@ always_comb begin
         end
         7'b1100011:begin
             Branch=1;
+            AluCtrl=4'b0000;
+            AluSrcA=1;
+            AluSrc=1;
+
         end
         7'b0100011:begin
             AluSrc=1;
@@ -66,7 +70,7 @@ always_comb begin
             AluSrc=1;
             RegWrite=1;
             Jump=1;
-            wb_sel=1;
+            AluSrcA=1;
         end
         7'b0110111:begin
             AluCtrl=4'b0000;
@@ -76,8 +80,9 @@ always_comb begin
         end
         7'b0010111:begin
             AluCtrl=4'b0000;
+            AluSrc=1;
             RegWrite=1;
-            wb_sel=1;
+            AluSrcA=1;
         end
 
 
