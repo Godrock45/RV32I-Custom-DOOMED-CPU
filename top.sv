@@ -10,7 +10,33 @@ module top_wire(
     output logic halt
     );
 
-    reg [31:0] PC_loc;
+    reg [31:0] next_PC_loc,PC_loc;
+    reg [31:0] IR_loc;
+    reg pc_en_loc;
+    reg [4:0] rd_loc;
+    reg [4:0] rs1_loc;
+    reg [4:0] rs2_loc;
+    reg [6:0] funct7_loc;
+    reg [2:0] funct3_loc;
+    reg [31:0] imm_loc;
+    reg [6:0] opcode_loc;
+    reg RegWrite_loc;
+    reg AluSrc_loc;
+    reg MemRead_loc;
+    reg MemWrite_loc;
+    reg [3:0]AluCtrl_loc={funct7_loc[5],funct3_loc};
+    reg Branch_loc;
+    reg Jump_loc;
+    reg AluSrcA_loc;
+    reg MemToReg_loc;
+    reg [31:0]wd_loc;
+    reg [31:0] rd1_loc;
+    reg [31:0] rd2_loc;
+    reg cmp_loc;
+    reg [31:0]res_loc;
+    reg [31:0]mem_dat_loc;
+    reg [31:0]addr_loc;
+    reg [31:0]dat_loc;
 
 
 
@@ -21,7 +47,17 @@ module top_wire(
 
 
 
-    PrgCo ad(.)
+
+    PrgCo ad(.clk(clk),.rst(rst),.pc_en(pc_en_loc),.next_pc(next_PC_loc),.pc(PC_loc));
+    ROME dc(.PC(PC_loc),.IR(IR_loc));
+    decoder tnt(.instruction(IR_loc),.rd(rd_loc),.rs1(rs1_loc),.rs2(rs2_loc),.funct7(funct7_loc),.funct3(funct3_loc));
+    control pnp(.Opcode(opcode_loc),.funct3(funct3_loc),.funct7(funct7_loc),.RegWrite(RegWrite_loc),.AluSrc(AluSrc_loc),.MemRead(MemRead_loc),.MemWrite(MemWrite_loc),.AluCtrl(AluCtrl_loc),.Branch(Branch_loc),.Jump(Jump_loc),.AluSrcA(AluSrcA_loc),.MemToReg(MemToReg_loc));
+    registers npn(.clk(clk),.rst(rst),.we(RegWrite),.rs1(rs1_loc),.rs2(rs2_loc),.rd(rd_loc),.wd(wd_loc),.rd1(rd1_loc),.rd2(rd2_loc));
+    cmp mph(.OpA(rd1_loc),.OpB(rd2_loc),.funct3(funct3_loc),.cmp(cmp_loc));
+    ALU tsmc(.OpA(rd1_loc),.OpB(rd2_loc),.AluCtrl(AluCtrl_loc),.Res(res_loc));
+    memory(.clk(clk),.addr(addr_loc),.dat(dat_loc),.funct3(funct3_loc),.write_ena(MemWrite_loc),.mem_dat(mem_dat_loc));
+
+
 
 
 
