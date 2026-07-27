@@ -18,11 +18,17 @@ always_ff @(posedge clk) begin
             memistan[addr[9:2]][8*addr[1:0]+:8]<=dat[7:0];
         end
         3'b001:begin
-            memistan[addr[9:2]][16*addr[1]+:16]<=dat[15:0];
+            if(~addr[0])begin
+                memistan[addr[9:2]][16*addr[1]+:16]<=dat[15:0];
+            end
         end
         3'b010:begin
-            memistan[addr[9:2]]<=dat;
+            if(addr[1:0]==2'b00)begin
+                memistan[addr[9:2]]<=dat;
+            end
         end
+        default:
+        ;
         endcase
     end
 end
