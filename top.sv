@@ -55,7 +55,7 @@ module top_wire(
     registers npn(.clk(clk),.rst(rst),.we(RegWrite),.rs1(rs1_loc),.rs2(rs2_loc),.rd(rd_loc),.wd(wd_loc),.rd1(rd1_loc),.rd2(rd2_loc));
     cmp mph(.OpA(rd1_loc),.OpB(rd2_loc),.funct3(funct3_loc),.cmp(cmp_loc));
     ALU tsmc(.OpA(rd1_loc),.OpB(rd2_loc),.AluCtrl(AluCtrl_loc),.Res(res_loc));
-    memory(.clk(clk),.addr(addr_loc),.dat(dat_loc),.funct3(funct3_loc),.write_ena(MemWrite_loc),.mem_dat(mem_dat_loc));
+    memory meme(.clk(clk),.addr(addr_loc),.dat(dat_loc),.funct3(funct3_loc),.write_ena(MemWrite_loc),.mem_dat(mem_dat_loc));
 
 
 
