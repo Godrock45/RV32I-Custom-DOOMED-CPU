@@ -1,5 +1,5 @@
 module comparator(
-    input  [31:0]OpA,
+    input logic [31:0]OpA,
     input logic [31:0]OpB,
     input logic [2:0]funct3,
     output logic cmp
