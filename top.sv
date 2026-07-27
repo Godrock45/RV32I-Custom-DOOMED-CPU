@@ -56,11 +56,11 @@ module top_wire(
     cmp mph(.OpA(rd1_loc),.OpB(rd2_loc),.funct3(funct3_loc),.cmp(cmp_loc));
     ALU tsmc(.OpA(rd1_loc),.OpB(rd2_loc),.AluCtrl(AluCtrl_loc),.Res(res_loc));
     memory meme(.clk(clk),.addr(addr_loc),.dat(dat_loc),.funct3(funct3_loc),.write_ena(MemWrite_loc),.mem_dat(mem_dat_loc));
-    
+
     assign AluSrc_loc=cmp_loc?1'b1:1'b0;
     assign rd1_loc=AluSrcA_loc?PC_loc:rd1_loc;
     assign rd2_loc=AluSrc_loc?imm_loc:rd2_loc;
-    assign next_PC_loc=(Jump_loc&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((AluSrc_loc)?res_loc:(PC_loc+32'b4))
+    assign next_PC_loc=(Jump_loc&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((AluSrc_loc)?res_loc:(PC_loc+32'b4)):(Jump_loc&~Branch_loc)?res_loc:(PC_loc+32'b4);
 
 
 
