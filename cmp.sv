@@ -1,7 +1,7 @@
 module comparator(
     input logic [31:0]OpA,
     input logic [31:0]OpB,
-    input logic [2:0]funct3
+    input logic [2:0]funct3,
     output logic cmp
 );
     always_comb begin
