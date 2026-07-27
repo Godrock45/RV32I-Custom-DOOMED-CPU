@@ -61,7 +61,7 @@ module top_wire(
     assign rd1_loc=AluSrcA_loc?PC_loc:rd1_loc;
     assign rd2_loc=AluSrc_loc?imm_loc:rd2_loc;
     assign next_PC_loc=(Jump_loc&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((AluSrc_loc)?res_loc:(PC_loc+32'b4)):(Jump_loc&~Branch_loc)?res_loc:(PC_loc+32'b4);
-
+    
 
 
 
