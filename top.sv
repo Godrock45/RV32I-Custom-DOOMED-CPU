@@ -41,7 +41,6 @@ module top_wire(
     logic [7:0] b;
     logic [15:0]h;
     logic [31:0] load_data;
-    memt
 
 
 
