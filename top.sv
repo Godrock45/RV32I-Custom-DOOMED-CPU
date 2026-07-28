@@ -40,6 +40,7 @@ module top_wire(
     logic [31:0] OpA_loc,OpB_loc;
     logic [7:0] b;
     logic [15:0]h;
+    logic [31:0] load_data;
 
 
 
@@ -57,31 +58,45 @@ module top_wire(
     ALU tsmc(.OpA(OpA_loc),.OpB(OpB_loc),.AluCtrl(AluCtrl_loc),.Res(res_loc));
     memory meme(.clk(clk),.addr(addr_loc),.dat(dat_loc),.funct3(funct3_loc),.write_ena(MemWrite_loc),.mem_dat(mem_dat_loc));
 
-    assign b=memy[8*res_loc[1:0]+:8];
-    assign h=memy[16*res_loc[1]+:16];
-    case(funct3_loc)
-        3'b000:
-            load_data={24'b0,mem_dat_loc[7:0]};
-        3'b001:
-            load_data={16'b0,mem_dat_loc[15:0]};
-        3'b010:
-            load_data=mem_dat_loc;
-        3'b100:
-            load_data={24{mem_dat_loc[7]},mem_dat_loc[7:0]};
-        3'b101:
-            load_data={16{mem_dat_loc[15]},mem_dat_loc[15:0]};
-        default:
-            load_data=32'b0;
-    endcase
+    assign b=mem_dat_loc[8*res_loc[1:0]+:8];
+    assign h=mem_dat_loc[16*res_loc[1]+:16];
+    always_comb begin
+        case(funct3_loc)
+            3'b000:
+                load_data={{24{b[7]}},b[7:0]};
+                
+            3'b001:
+                load_data={{16{h[15]}},h[15:0]};
+                
+            3'b010:
+                load_data=mem_dat_loc;
+            3'b100:
+                load_data={24'b0,b[7:0]};
+            3'b101:
+                load_data={16'b0,h[15:0]};
+            default:
+                load_data=32'b0;
+        endcase
+    end
 
     assign pc_en_loc=1'b1;
-    assign OpA=AluSrcA_loc?PC_loc:rd1_loc;
-    assign OpB=AluSrc_loc?imm_loc:rd2_loc;
+    assign OpA_loc=AluSrcA_loc?PC_loc:rd1_loc;
+    assign OpB_loc=AluSrc_loc?imm_loc:rd2_loc;
     assign next_PC_loc=(Jump_loc&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((cmp_loc)?res_loc:(PC_loc+32'd4)):(Jump_loc&~Branch_loc)?res_loc:(PC_loc+32'd4);
     assign addr_loc=res_loc;
     assign dat_loc=rd2_loc;
     assign wd_loc=(MemtoReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
 
+
+
+
+    //debug assignments
+    assign dbg_pc      = PC_loc;
+    assign dbg_instr   = IR_loc;    
+    assign dbg_reg_we  = RegWrite_loc;
+    assign dbg_rd      = rd_loc;
+    assign dbg_wb_data = wd_loc;
+    assign halt        = 1'b0;
 
 
 
