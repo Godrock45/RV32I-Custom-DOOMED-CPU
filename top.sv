@@ -60,16 +60,26 @@ module top_wire(
     assign b=memy[8*res_loc[1:0]+:8];
     assign h=memy[16*res_loc[1]+:16];
     case(funct3_loc)
-
-
-
+        3'b000:
+            load_data={24'b0,mem_dat_loc[7:0]};
+        3'b001:
+            load_data={16'b0,mem_dat_loc[15:0]};
+        3'b010:
+            load_data=mem_dat_loc;
+        3'b100:
+            load_data={24{mem_dat_loc[7]},mem_dat_loc[7:0]};
+        3'b101:
+            load_data={16{mem_dat_loc[15]},mem_dat_loc[15:0]};
+        default:
+            load_data=32'b0;
     endcase
+
     assign pc_en_loc=1'b1;
     assign OpA=AluSrcA_loc?PC_loc:rd1_loc;
     assign OpB=AluSrc_loc?imm_loc:rd2_loc;
     assign next_PC_loc=(Jump_loc&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((cmp_loc)?res_loc:(PC_loc+32'd4)):(Jump_loc&~Branch_loc)?res_loc:(PC_loc+32'd4);
-    assign addr_loc=res_loc
-    assign dat_loc=rd2_loc
+    assign addr_loc=res_loc;
+    assign dat_loc=rd2_loc;
     assign wd_loc=(MemtoReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
 
 
