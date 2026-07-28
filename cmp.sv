@@ -11,9 +11,9 @@ module comparator(
             3'b001:
             cmp=(OpA!=OpB);
             3'b100:
-            cmp=($signed(OpA) < $signed(OpB));
+            cmp=($signed(OpA)<$signed(OpB));
             3'b101:
-            cmp=($signed(OpA) >= $signed(OpB));
+            cmp=($signed(OpA)>=$signed(OpB));
             3'b110:
             cmp=(OpA<OpB);
             3'b111:
