@@ -62,6 +62,7 @@ module top_wire(
     assign next_PC_loc=(Jump_loc&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((cmp_loc)?res_loc:(PC_loc+32'd4)):(Jump_loc&~Branch_loc)?res_loc:(PC_loc+32'd4);
     assign addr_loc=(MemToReg_loc|MemWrite_loc)?res_loc:32'b0;
     assign dat_loc=(MemWrite_loc)?rd2_loc:32'b0;
+    assign wd_loc=(MemtoReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
 
 
 
