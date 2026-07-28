@@ -38,8 +38,8 @@ module top_wire(
     logic [31:0] addr_loc;
     logic [31:0] dat_loc;
     logic [31:0] OpA_loc,OpB_loc;
-
-
+    logic [7:0] b;
+    logic [15:0]h;
 
 
 
@@ -56,12 +56,20 @@ module top_wire(
     comparator mph(.OpA(rd1_loc),.OpB(rd2_loc),.funct3(funct3_loc),.cmp(cmp_loc));
     ALU tsmc(.OpA(OpA_loc),.OpB(OpB_loc),.AluCtrl(AluCtrl_loc),.Res(res_loc));
     memory meme(.clk(clk),.addr(addr_loc),.dat(dat_loc),.funct3(funct3_loc),.write_ena(MemWrite_loc),.mem_dat(mem_dat_loc));
+
+    assign b=memy[8*res_loc[1:0]+:8];
+    assign h=memy[16*res_loc[1]+:16];
+    case(funct3_loc)
+
+
+
+    endcase
     assign pc_en_loc=1'b1;
     assign OpA=AluSrcA_loc?PC_loc:rd1_loc;
     assign OpB=AluSrc_loc?imm_loc:rd2_loc;
     assign next_PC_loc=(Jump_loc&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((cmp_loc)?res_loc:(PC_loc+32'd4)):(Jump_loc&~Branch_loc)?res_loc:(PC_loc+32'd4);
-    assign addr_loc=(MemToReg_loc|MemWrite_loc)?res_loc:32'b0;
-    assign dat_loc=(MemWrite_loc)?rd2_loc:32'b0;
+    assign addr_loc=res_loc
+    assign dat_loc=rd2_loc
     assign wd_loc=(MemtoReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
 
 
