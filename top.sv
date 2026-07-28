@@ -41,6 +41,7 @@ module top_wire(
     logic [7:0] b;
     logic [15:0]h;
     logic [31:0] load_data;
+    memt
 
 
 
@@ -55,7 +56,7 @@ module top_wire(
     control pnp(.Opcode(opcode_loc),.funct3(funct3_loc),.funct7(funct7_loc),.RegWrite(RegWrite_loc),.AluSrc(AluSrc_loc),.MemRead(MemRead_loc),.MemWrite(MemWrite_loc),.AluCtrl(AluCtrl_loc),.Branch(Branch_loc),.Jump(Jump_loc),.AluSrcA(AluSrcA_loc),.MemToReg(MemToReg_loc));
     registers npn(.clk(clk),.rst(rst),.we(RegWrite_loc),.rs1(rs1_loc),.rs2(rs2_loc),.rd(rd_loc),.wd(wd_loc),.rd1(rd1_loc),.rd2(rd2_loc));
     comparator mph(.OpA(rd1_loc),.OpB(rd2_loc),.funct3(funct3_loc),.cmp(cmp_loc));
-    ALU tsmc(.OpA(OpA_loc),.OpB(OpB_loc),.AluCtrl(AluCtrl_loc),.Res(res_loc));
+    ALU tsmc(.OpA(OpA_loc),.OpB(OpB_loc),.ALUCtrl(AluCtrl_loc),.Res(res_loc));
     memory meme(.clk(clk),.addr(addr_loc),.dat(dat_loc),.funct3(funct3_loc),.write_ena(MemWrite_loc),.mem_dat(mem_dat_loc));
 
     assign b=mem_dat_loc[8*res_loc[1:0]+:8];
@@ -64,10 +65,8 @@ module top_wire(
         case(funct3_loc)
             3'b000:
                 load_data={{24{b[7]}},b[7:0]};
-                
             3'b001:
                 load_data={{16{h[15]}},h[15:0]};
-                
             3'b010:
                 load_data=mem_dat_loc;
             3'b100:
@@ -85,7 +84,7 @@ module top_wire(
     assign next_PC_loc=(Jump_loc&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((cmp_loc)?res_loc:(PC_loc+32'd4)):(Jump_loc&~Branch_loc)?res_loc:(PC_loc+32'd4);
     assign addr_loc=res_loc;
     assign dat_loc=rd2_loc;
-    assign wd_loc=(MemtoReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
+    assign wd_loc=(MemToReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
 
 
 
