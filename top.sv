@@ -10,6 +10,8 @@ module top_wire(
     output logic halt
     );
 
+
+
     logic [31:0] next_PC_loc,PC_loc;
     logic [31:0] IR_loc;
     logic pc_en_loc;
@@ -47,8 +49,6 @@ module top_wire(
 
 
 
-
-
     PrgCo ad(.clk(clk),.rst(rst),.pc_en(pc_en_loc),.next_pc(next_PC_loc),.pc(PC_loc));
     ROME dc(.PC(PC_loc),.IR(IR_loc));
     decoder tnt(.instruction(IR_loc),.opcode(opcode_loc),.imm(imm_loc),.rd(rd_loc),.rs1(rs1_loc),.rs2(rs2_loc),.funct7(funct7_loc),.funct3(funct3_loc));
@@ -57,6 +57,11 @@ module top_wire(
     comparator mph(.OpA(rd1_loc),.OpB(rd2_loc),.funct3(funct3_loc),.cmp(cmp_loc));
     ALU tsmc(.OpA(OpA_loc),.OpB(OpB_loc),.ALUCtrl(AluCtrl_loc),.Res(res_loc));
     memory meme(.clk(clk),.addr(addr_loc),.dat(dat_loc),.funct3(funct3_loc),.write_ena(MemWrite_loc),.mem_dat(mem_dat_loc));
+
+
+
+
+
 
     assign b=mem_dat_loc[8*res_loc[1:0]+:8];
     assign h=mem_dat_loc[16*res_loc[1]+:16];
@@ -76,6 +81,9 @@ module top_wire(
                 load_data=32'b0;
         endcase
     end
+
+
+
 
     assign pc_en_loc=1'b1;
     assign OpA_loc=AluSrcA_loc?PC_loc:rd1_loc;
