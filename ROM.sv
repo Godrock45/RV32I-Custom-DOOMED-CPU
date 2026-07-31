@@ -10,7 +10,7 @@ initial begin
     registan[3]=32'h00302023;
     registan[4]=32'h00002203;
     registan[5]=32'h00418463;
-    registan[6]=32'h00000013;
+    registan[6]=32'h06300293;
     registan[7]=32'h00000063;
 
 end
