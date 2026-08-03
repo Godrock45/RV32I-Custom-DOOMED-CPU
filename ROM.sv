@@ -2,7 +2,7 @@ module ROME(
     input [31:0]PC,
     output [31:0] IR
 );
-reg [31:0] registan [255:0];
+reg [31:0] registan [16383:0];
 initial begin
     registan[0]=32'h00500093;
     registan[1]=32'h00300113;
@@ -14,7 +14,7 @@ initial begin
     registan[7]=32'h00000063;
 
 end
-assign IR=registan[PC[9:2]];
+assign IR=registan[PC[15:2]];
 
 
 endmodule
