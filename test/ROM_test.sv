@@ -93,7 +93,22 @@ initial begin
     registan[86]=32'h00C28F67;
     registan[87]=32'h001E0E13;  // poison
     registan[88]=32'h02A00F93;
-    registan[89]=32'h00000063;  // self-loop
+    registan[89]=32'h00500013;  // must NOT change x0
+    registan[90]=32'h00000A33;
+    registan[91]=32'h05402223;
+    registan[92]=32'h02100A13;
+    registan[93]=32'h01409A33;
+    registan[94]=32'h05402423;
+    registan[95]=32'h00300A13;
+    registan[96]=32'h00000493;
+    registan[97]=32'h00148493;
+    registan[98]=32'hFFFA0A13;
+    registan[99]=32'hFE0A1CE3;  // backward branch
+    registan[100]=32'h00000317;
+    registan[101]=32'h00D303E7;  // target has bit0 set -> must be masked
+    registan[102]=32'h001E0E13;  // poison
+    registan[103]=32'h00000417;
+    registan[104]=32'h00000063;  // self-loop
 end
 assign IR=registan[PC[9:2]];
 endmodule

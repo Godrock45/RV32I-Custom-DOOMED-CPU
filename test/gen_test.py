@@ -122,6 +122,39 @@ e(addi("x31","x0",0x2A));        EXP[31] = 0x2A     # sentinel: we got here
 # recompute x5 expectation (auipc x5,0 at jalr_setup)
 EXP[5] = (jalr_setup*4) & M32
 
+# ---------------- phase 6: edge cases ----------------
+
+# (a) x0 is hardwired zero -- a write to it must be discarded
+e(addi("x0","x0",5), "must NOT change x0");   EXP[0] = 0
+e(add("x20","x0","x0")); e(sw("x20",17*4,"x0")); MEXP[17] = 0
+
+# (b) shift amount uses only OpB[4:0]:  5 << (33 & 31) == 5 << 1
+e(addi("x20","x0",33))
+e(sll("x20","x1","x20")); e(sw("x20",18*4,"x0")); MEXP[18] = 5 << 1
+
+# (c) BACKWARD branch -- negative B-type offset, i.e. a real loop
+e(addi("x20","x0",3))                       # loop counter
+e(addi("x9","x0",0))                        # iterations actually executed
+loop_top = idx()
+e(addi("x9","x9",1))
+e(addi("x20","x20",-1))
+bne_i = idx()
+e(bne("x20","x0",(loop_top - bne_i)*4), "backward branch")
+EXP[9]  = 3                                 # looped exactly 3 times
+EXP[20] = 0
+
+# (d) JALR must clear bit 0 of the computed target.
+#     Target is written with the LSB set; if the mask is missing the PC goes odd,
+#     and the AUIPC at the landing site captures an odd value.
+jm_setup = idx()
+e(auipc("x6",0));                EXP[6] = (jm_setup*4) & M32
+jm_i = idx()
+e(jalr("x7",13,"x6"), "target has bit0 set -> must be masked")
+EXP[7] = (jm_i*4 + 4) & M32
+e(addi("x28","x28",1), "poison")
+jm_land = idx()
+e(auipc("x8",0));                EXP[8] = (jm_land*4) & M32   # ODD if mask failed
+
 # ---------------- halt ----------------
 halt_i = idx()
 e(beq("x0","x0",0), "self-loop")

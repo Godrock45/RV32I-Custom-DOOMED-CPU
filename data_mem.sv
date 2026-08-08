@@ -8,7 +8,7 @@ module memory(
 );
 reg [31:0] memistan [255:0];
 always_comb begin
-    mem_dat=memistan[addr[16383:2]];
+    mem_dat=memistan[addr[9:2]];
 end
 
 always_ff @(posedge clk) begin
