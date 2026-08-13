@@ -3,7 +3,7 @@
     "shell": "powershell.exe",
     "commands": [
       {
-        "match": "\\.(sv|txt)$",
+        "match": "\\.(sv|txt|md|py|sh)$",
         "isAsync": true,
         "cmd": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/.vscode/auto-commit.ps1\" -SavedFile \"${file}\"",
         "message": "Auto-committing ${fileBasename}..."
