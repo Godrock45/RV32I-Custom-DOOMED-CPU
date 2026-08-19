@@ -11,6 +11,76 @@ module top_wire(
     );
 
 
+    // Fetch
+    logic [31:0] if_pc,if_pc_plus4,if_instr,next_pc;
+
+    // Decode
+    logic id_pc,id_pc_plus4,id_instrl
+
+    // ID
+    logic[6:0] id_opcode, id_funct7;
+    logic[2:0] id_funct3;
+    logic[4:0] id_rs1,id_rs2,id_rd;
+    logic[31:0]id_imm,id_rd1,id_rd2;
+    logic id_RegWrite,id_AluSrc,id_AluSrcA,id_MemRead,id_MemWrite,id_MemToReg,id_Branch,id_Jump;
+    logic [3:0] id_AluCtrl;
+
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     logic [31:0] next_PC_loc,PC_loc;
     logic [31:0] IR_loc;
