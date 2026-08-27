@@ -14,8 +14,8 @@ module top_wire(
     // Fetch
     logic [31:0] if_pc,if_pc_plus4,if_instr,next_pc;
 
-    // Decode
-    logic id_pc,id_pc_plus4,id_instrl
+    // IF/ID
+    logic id_pc,id_pc_plus4,id_instr
 
     // ID
     logic[6:0] id_opcode, id_funct7;
@@ -24,6 +24,27 @@ module top_wire(
     logic[31:0]id_imm,id_rd1,id_rd2;
     logic id_RegWrite,id_AluSrc,id_AluSrcA,id_MemRead,id_MemWrite,id_MemToReg,id_Branch,id_Jump;
     logic [3:0] id_AluCtrl;
+
+    // ID/EX
+    logic [31:0] ex_pc, ex_pc_plus4, ex_rd1, ex_rd2, ex_imm;
+    logic [4:0] ex_rs1, ex_rs2, ex_rd;
+    logic [2:0] ex_funct3;
+    logic [3:0] ex_AluCtrl;
+    logic ex_RegWrite, ex_AluSrc, ex_AluSrcA, ex_MemRead, ex_MemWrite, ex_MemToReg, ex_Branch, ex_Jump;
+    logic [31:0] ex_opA,ex_opB,ex_alu_res;
+    logic ex_cmp;
+
+    // EX/MEM
+    logic [31:0] mem_alu_res, mem_rd2, mem_pc_plus4, mem_dat, mem_load_data;
+    logic [4:0] mem_rd;
+    logic [2:0] mem_funct3;
+    logic mem_RegWrite, mem_MemRead, mem_MemWrite, mem_MemToReg, mem_Jump;
+
+    // MEM/WB
+
+    logic [31:0] wb_alu_res, wb_load_data, wb_pc_plus4, wb_data;
+    logic [4:0] wb_rd;
+    logic wb_RegWrite, wb_MemToReg, wb_Jump;
 
     
     
@@ -119,14 +140,14 @@ module top_wire(
 
 
 
-    PrgCo ad(.clk(clk),.rst(rst),.pc_en(pc_en_loc),.next_pc(next_PC_loc),.pc(PC_loc));
-    ROME dc(.PC(PC_loc),.IR(IR_loc));
-    decoder tnt(.instruction(IR_loc),.opcode(opcode_loc),.imm(imm_loc),.rd(rd_loc),.rs1(rs1_loc),.rs2(rs2_loc),.funct7(funct7_loc),.funct3(funct3_loc));
+    PrgCo ad(.clk(clk),.rst(rst),.pc_en(pc_en_loc),.next_pc(next_loc),.pc(if_pc));
+    ROME dc(.PC(if_pc),.IR(IR_loc));
+    decoder tnt(.instruction(id_instr),.opcode(opcode_loc),.imm(imm_loc),.rd(rd_loc),.rs1(rs1_loc),.rs2(rs2_loc),.funct7(funct7_loc),.funct3(funct3_loc));
     control pnp(.Opcode(opcode_loc),.funct3(funct3_loc),.funct7(funct7_loc),.RegWrite(RegWrite_loc),.AluSrc(AluSrc_loc),.MemRead(MemRead_loc),.MemWrite(MemWrite_loc),.AluCtrl(AluCtrl_loc),.Branch(Branch_loc),.Jump(Jump_loc),.AluSrcA(AluSrcA_loc),.MemToReg(MemToReg_loc));
-    registers npn(.clk(clk),.rst(rst),.we(RegWrite_loc),.rs1(rs1_loc),.rs2(rs2_loc),.rd(rd_loc),.wd(wd_loc),.rd1(rd1_loc),.rd2(rd2_loc));
-    comparator mph(.OpA(rd1_loc),.OpB(rd2_loc),.funct3(funct3_loc),.cmp(cmp_loc));
-    ALU tsmc(.OpA(OpA_loc),.OpB(OpB_loc),.ALUCtrl(AluCtrl_loc),.Res(res_loc));
-    memory meme(.clk(clk),.addr(addr_loc),.dat(dat_loc),.funct3(funct3_loc),.write_ena(MemWrite_loc),.mem_dat(mem_dat_loc));
+    registers npn(.clk(clk),.rst(rst),.we(wb_RegWrite),.rs1(id_rs1),.rs2(id_rs2),.rd(wb_rd),.wd(wb_data),.rd1(rd1_loc),.rd2(rd2_loc));
+    comparator mph(.OpA(ex_rd1),.OpB(ex_rd2),.funct3(funct3_loc),.cmp(cmp_loc));
+    ALU tsmc(.OpA(ex_opA),.OpB(ex_OpB),.ALUCtrl(AluCtrl_loc),.Res(res_loc));
+    memory meme(.clk(clk),.addr(addr_loc),.dat(mem_rd2),.funct3(mem_funct3),.write_ena(mem_MemWrite),.mem_dat(mem_alu_res));
 
 
 
