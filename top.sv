@@ -15,7 +15,7 @@ module top_wire(
     logic [31:0] if_pc,if_pc_plus4,if_instr,next_pc;
 
     // IF/ID
-    logic id_pc,id_pc_plus4,id_instr
+    logic [31:0]id_pc,id_pc_plus4,id_instr
 
     // ID
     logic[6:0] id_opcode, id_funct7;
@@ -140,15 +140,15 @@ module top_wire(
 
 
 
-    PrgCo ad(.clk(clk),.rst(rst),.pc_en(pc_en_loc),.next_pc(next_loc),.pc(if_pc));
-    ROME dc(.PC(if_pc),.IR(IR_loc));
-    decoder tnt(.instruction(id_instr),.opcode(opcode_loc),.imm(imm_loc),.rd(rd_loc),.rs1(rs1_loc),.rs2(rs2_loc),.funct7(funct7_loc),.funct3(funct3_loc));
-    control pnp(.Opcode(opcode_loc),.funct3(funct3_loc),.funct7(funct7_loc),.RegWrite(RegWrite_loc),.AluSrc(AluSrc_loc),.MemRead(MemRead_loc),.MemWrite(MemWrite_loc),.AluCtrl(AluCtrl_loc),.Branch(Branch_loc),.Jump(Jump_loc),.AluSrcA(AluSrcA_loc),.MemToReg(MemToReg_loc));
-    registers npn(.clk(clk),.rst(rst),.we(wb_RegWrite),.rs1(id_rs1),.rs2(id_rs2),.rd(wb_rd),.wd(wb_data),.rd1(rd1_loc),.rd2(rd2_loc));
-    comparator mph(.OpA(ex_rd1),.OpB(ex_rd2),.funct3(funct3_loc),.cmp(cmp_loc));
-    ALU tsmc(.OpA(ex_opA),.OpB(ex_OpB),.ALUCtrl(AluCtrl_loc),.Res(res_loc));
+    PrgCo ad(.clk(clk),.rst(rst),.pc_en(pc_en_loc),.next_pc(next_pc),.pc(if_pc));
+    ROME dc(.PC(if_pc),.IR(if_instr));
+    decoder tnt(.instruction(id_instr),.opcode(id_opcode),.imm(id_imm),.rd(id_rd),.rs1(id_rs1),.rs2(id_rs2),.funct7(id_funct7),.funct3(id_funct3));
+    control pnp(.Opcode(id_opcode),.funct3(id_funct3),.funct7(id_funct7),.RegWrite(id_RegWrite),.AluSrc(id_AluSrc),.MemRead(id_MemRead),.MemWrite(id_MemWrite),.AluCtrl(id_AluCtrl),.Branch(id_Branch),.Jump(id_Jump),.AluSrcA(id_AluSrcA),.MemToReg(id_MemToReg));
+    registers npn(.clk(clk),.rst(rst),.we(wb_RegWrite),.rs1(id_rs1),.rs2(id_rs2),.rd(wb_rd),.wd(wb_data),.rd1(id_rd1),.rd2(id_rd2));
+    comparator mph(.OpA(ex_rd1),.OpB(ex_rd2),.funct3(ex_funct3),.cmp(ex_cmp));
+    ALU tsmc(.OpA(ex_opA),.OpB(ex_opB),.ALUCtrl(ex_AluCtrl),.Res(ex_alu_res));
     memory meme(.clk(clk),.addr(mem_alu_res),.dat(mem_rd2),.funct3(mem_funct3),.write_ena(mem_MemWrite),.mem_dat(mem_dat));
-
+    load_extend ext(.mem_dat(mem_dat),.addr_lo(mem_funct3),.load_data(mem_load_data));
 
 
 
