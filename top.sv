@@ -147,8 +147,7 @@ module top_wire(
     registers npn(.clk(clk),.rst(rst),.we(wb_RegWrite),.rs1(id_rs1),.rs2(id_rs2),.rd(wb_rd),.wd(wb_data),.rd1(rd1_loc),.rd2(rd2_loc));
     comparator mph(.OpA(ex_rd1),.OpB(ex_rd2),.funct3(funct3_loc),.cmp(cmp_loc));
     ALU tsmc(.OpA(ex_opA),.OpB(ex_OpB),.ALUCtrl(AluCtrl_loc),.Res(res_loc));
-    memory meme(.clk(clk),.addr(addr_loc),.dat(mem_rd2),.funct3(mem_funct3),.write_ena(mem_MemWrite),.mem_dat(mem_alu_res));
-
+    memory meme(.clk(clk),.addr(mem_alu_res),.dat(mem_rd2),.funct3(mem_funct3),.write_ena(mem_MemWrite),.mem_dat(mem_dat));
 
 
 
@@ -172,6 +171,24 @@ module top_wire(
                 load_data=32'b0;
         endcase
     end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
