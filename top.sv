@@ -66,28 +66,6 @@ module top_wire(
 
 
 
-    /*assign b=mem_dat_loc[8*res_loc[1:0]+:8];
-    assign h=mem_dat_loc[16*res_loc[1]+:16];
-    always_comb begin
-        case(funct3_loc)
-            3'b000:
-                load_data={{24{b[7]}},b[7:0]};
-            3'b001:
-                load_data={{16{h[15]}},h[15:0]};
-            3'b010:
-                load_data=mem_dat_loc;
-            3'b100:
-                load_data={24'b0,b[7:0]};
-            3'b101:
-                load_data={16'b0,h[15:0]};
-            default:
-                load_data=32'b0;
-        endcase
-    end */
-
-
-
-
 
 
 
