@@ -46,94 +46,7 @@ module top_wire(
     logic [4:0] wb_rd;
     logic wb_RegWrite, wb_MemToReg, wb_Jump;
 
-    
-    
-    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    logic [31:0] next_PC_loc,PC_loc;
-    logic [31:0] IR_loc;
-    logic pc_en_loc;
-    logic [4:0] rd_loc;
-    logic [4:0] rs1_loc;
-    logic [4:0] rs2_loc;
-    logic [6:0] funct7_loc;
-    logic [2:0] funct3_loc;
-    logic [31:0] imm_loc;
-    logic [6:0] opcode_loc;
-    logic RegWrite_loc;
-    logic AluSrc_loc;
-    logic MemRead_loc;
-    logic MemWrite_loc;
-    logic [3:0] AluCtrl_loc;
-    logic Branch_loc;
-    logic Jump_loc;
-    logic AluSrcA_loc;
-    logic MemToReg_loc;
-    logic [31:0] wd_loc;
-    logic [31:0] rd1_loc;
-    logic [31:0] rd2_loc;
-    logic cmp_loc;
-    logic [31:0] res_loc;
-    logic [31:0] mem_dat_loc;
-    logic [31:0] addr_loc;
-    logic [31:0] dat_loc;
-    logic [31:0] OpA_loc,OpB_loc;
-    logic [7:0] b;
-    logic [15:0]h;
-    logic [31:0] load_data;
 
 
 
@@ -153,7 +66,7 @@ module top_wire(
 
 
 
-    assign b=mem_dat_loc[8*res_loc[1:0]+:8];
+    /*assign b=mem_dat_loc[8*res_loc[1:0]+:8];
     assign h=mem_dat_loc[16*res_loc[1]+:16];
     always_comb begin
         case(funct3_loc)
@@ -170,7 +83,7 @@ module top_wire(
             default:
                 load_data=32'b0;
         endcase
-    end
+    end */
 
 
 
@@ -194,11 +107,11 @@ module top_wire(
 
 
     assign pc_en_loc=1'b1;
-    assign OpA_loc=AluSrcA_loc?PC_loc:rd1_loc;
-    assign OpB_loc=AluSrc_loc?imm_loc:rd2_loc;
-    assign next_PC_loc=(Jump_loc&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((cmp_loc)?res_loc:(PC_loc+32'd4)):(Jump_loc&~Branch_loc)?res_loc:(PC_loc+32'd4);
-    assign addr_loc=res_loc;
-    assign dat_loc=rd2_loc;
+    assign ex_opA=ex_AluSrcA?ex_pc:ex_rd1;
+    assign ex_opB=AluSrc_loc?ex_imm:ex_rd2;
+    assign next_pc=(ex_Jump&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((cmp_loc)?res_loc:(PC_loc+32'd4)):(Jump_loc&~Branch_loc)?res_loc:(PC_loc+32'd4);
+    assign wb_alu_res=ex_alu_res;
+    assign wb_data=ex_rd2;
     assign wd_loc=(MemToReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
 
 
