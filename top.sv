@@ -109,7 +109,7 @@ module top_wire(
     assign pc_en_loc=1'b1;
     assign ex_opA=ex_AluSrcA?ex_pc:ex_rd1;
     assign ex_opB=AluSrc_loc?ex_imm:ex_rd2;
-    assign next_pc=(ex_Jump&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((cmp_loc)?res_loc:(PC_loc+32'd4)):(Jump_loc&~Branch_loc)?res_loc:(PC_loc+32'd4);
+    assign next_pc=(ex_Jump&ex_Branch)?(ex_alu_res&~32'd1):(~ex_Jump&ex_Branch)?((ex_cmp)?ex_alu_res:(ex_pc+32'd4)):(ex_Jump&~ex_Branch)?ex_alu_res:(ex_pc+32'd4);
     assign wb_alu_res=ex_alu_res;
     assign wb_data=ex_rd2;
     assign wd_loc=(MemToReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
