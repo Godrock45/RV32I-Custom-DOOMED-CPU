@@ -15,7 +15,7 @@ module top_wire(
     logic [31:0] if_pc,if_pc_plus4,if_instr,next_pc;
 
     // IF/ID
-    logic [31:0]id_pc,id_pc_plus4,id_instr
+    logic [31:0]id_pc,id_pc_plus4,id_instr;
 
     // ID
     logic[6:0] id_opcode, id_funct7;
@@ -90,7 +90,7 @@ module top_wire(
     assign next_pc=(ex_Jump&ex_Branch)?(ex_alu_res&~32'd1):(~ex_Jump&ex_Branch)?((ex_cmp)?ex_alu_res:(ex_pc+32'd4)):(ex_Jump&~ex_Branch)?ex_alu_res:(ex_pc+32'd4);
     assign wb_alu_res=ex_alu_res;
     assign wb_data=ex_rd2;
-    assign wd_loc=(MemToReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
+    assign wd_load_data=(MemToReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
 
 
 
