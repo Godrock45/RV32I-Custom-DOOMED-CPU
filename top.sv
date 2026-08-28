@@ -57,7 +57,7 @@ module top_wire(
     ROME dc(.PC(if_pc),.IR(if_instr));
     decoder tnt(.instruction(id_instr),.opcode(id_opcode),.imm(id_imm),.rd(id_rd),.rs1(id_rs1),.rs2(id_rs2),.funct7(id_funct7),.funct3(id_funct3));
     control pnp(.Opcode(id_opcode),.funct3(id_funct3),.funct7(id_funct7),.RegWrite(id_RegWrite),.AluSrc(id_AluSrc),.MemRead(id_MemRead),.MemWrite(id_MemWrite),.AluCtrl(id_AluCtrl),.Branch(id_Branch),.Jump(id_Jump),.AluSrcA(id_AluSrcA),.MemToReg(id_MemToReg));
-    registers npn(.clk(clk),.rst(rst),.we(wb_RegWrite),.rs1(id_rs1),.rs2(id_rs2),.rd(wb_rd),.wd(wb_data),.rd1(id_rd1),.rd2(id_rd2));
+    registers npn(.clk(clk),.rst(rst),.we(wb_RegWrite),.rs1(id_rs1),.rs2(id_rs2),.rd(id_rd),.wd(id_data),.rd1(id_rd1),.rd2(id_rd2));
     comparator mph(.OpA(ex_rd1),.OpB(ex_rd2),.funct3(ex_funct3),.cmp(ex_cmp));
     ALU tsmc(.OpA(ex_opA),.OpB(ex_opB),.ALUCtrl(ex_AluCtrl),.Res(ex_alu_res));
     memory meme(.clk(clk),.addr(mem_alu_res),.dat(mem_rd2),.funct3(mem_funct3),.write_ena(mem_MemWrite),.mem_dat(mem_dat));
@@ -90,7 +90,7 @@ module top_wire(
     assign next_pc=(ex_Jump&ex_Branch)?(ex_alu_res&~32'd1):(~ex_Jump&ex_Branch)?((ex_cmp)?ex_alu_res:(ex_pc+32'd4)):(ex_Jump&~ex_Branch)?ex_alu_res:(ex_pc+32'd4);
     assign wb_alu_res=ex_alu_res;
     assign wb_data=ex_rd2;
-    assign wd_load_data=(MemToReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
+    assign wb_load_data=(MemToReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
 
 
 
