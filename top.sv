@@ -53,7 +53,7 @@ module top_wire(
 
 
 
-    PrgCo ad(.clk(clk),.rst(rst),.pc_en(pc_en_loc),.next_pc(next_pc),.pc(if_pc));
+    PrgCo ad(.clk(clk),.rst(rst),.pc_en(1'b1),.next_pc(next_pc),.pc(if_pc));
     ROME dc(.PC(if_pc),.IR(if_instr));
     decoder tnt(.instruction(id_instr),.opcode(id_opcode),.imm(id_imm),.rd(id_rd),.rs1(id_rs1),.rs2(id_rs2),.funct7(id_funct7),.funct3(id_funct3));
     control pnp(.Opcode(id_opcode),.funct3(id_funct3),.funct7(id_funct7),.RegWrite(id_RegWrite),.AluSrc(id_AluSrc),.MemRead(id_MemRead),.MemWrite(id_MemWrite),.AluCtrl(id_AluCtrl),.Branch(id_Branch),.Jump(id_Jump),.AluSrcA(id_AluSrcA),.MemToReg(id_MemToReg));
@@ -68,7 +68,7 @@ module top_wire(
 
 
     //transitions
-
+    assign if_pc_plus4 = if_pc + 32'd4;
     // IF/ID
     always_ff @(posedge clk) begin
         if(rst) begin
@@ -78,14 +78,14 @@ module top_wire(
         end else begin
             id_pc<=if_pc;
             id_pc_plus4<=if_pc_plus4;
-            id_instr=if_instr;
+            id_instr<=if_instr;
     end
     end
 
     // ID/EX
     always_ff @(posedge clk) begin
         if(rst) begin
-            ex_pc<=0;ex_pc_plus4<=0;ex_rd1<=0;ex_rd2=0;ex_imm<=0;ex_rs1=0;
+            ex_pc<=0;ex_pc_plus4<=0;ex_rd1<=0;ex_rd2<=0;ex_imm<=0;ex_rs1<=0;
             ex_rs2<=0;ex_rd<=0;ex_funct3<=0;ex_AluCtrl<=0;ex_RegWrite<=0;
             ex_AluSrc<=0;ex_AluSrcA<=0;ex_MemRead<=0;ex_MemWrite<=0; ex_MemToReg<=0;
             ex_Branch<=0;ex_Jump<=0;
@@ -98,7 +98,7 @@ module top_wire(
             ex_RegWrite<=id_RegWrite;   ex_AluSrc<=id_AluSrc;
             ex_AluSrcA<=id_AluSrcA; ex_MemRead<=id_MemRead;
             ex_MemWrite<=id_MemWrite;   ex_MemToReg<=id_MemToReg;
-            ex_Branch<=id_Branch;   ex_Jump<=id_jump;
+            ex_Branch<=id_Branch;   ex_Jump<=id_Jump;
         end
         end
         assign ex_opA=ex_AluSrcA?ex_pc:ex_rd1;
@@ -106,7 +106,7 @@ module top_wire(
         
 
         always_comb begin
-            unique case(ex_Branch,ex_Jump)
+            unique case({ex_Branch,ex_Jump})
                 2'b01:
                     next_pc=ex_alu_res;
                 2'b10:
@@ -122,13 +122,13 @@ module top_wire(
             if(rst)begin
                 mem_alu_res<=0;  mem_rd2<=0;   mem_pc_plus4<=0;
                 mem_rd<=0;       mem_funct3<=0; mem_RegWrite<=0;
-                mem_MemRead<=0;  mem_MemToReg<=0; mem_Jump<=0;
+                mem_MemRead<=0;  mem_MemToReg<=0; mem_Jump<=0; mem_MemWrite<=0;
+
             end 
             else begin
                 mem_alu_res<=ex_alu_res;   mem_rd2 <=ex_rd2;
                 mem_pc_plus4<=ex_pc_plus4;  mem_rd<=ex_rd;
-                mem_funct3<=ex_funct3;  mem_RegWrite<=ex_RegWrite;
-                mem_funct3 <= ex_funct3; mem_MemWrite<=ex_MemWrite;
+                mem_funct3<=ex_funct3;  mem_RegWrite<=ex_RegWrite; mem_MemWrite<=ex_MemWrite;
                 mem_MemToReg<=ex_MemToReg; mem_Jump<=ex_Jump;
             end
         end
@@ -147,38 +147,8 @@ module top_wire(
         end
 
         // -----WB-----
-        assign wb_data=(wb_MemToReg)?wb_load_data:wb_Jump?(PC_loc+32'd4):wb_alu_res;
+        assign wb_data=(wb_MemToReg)?wb_load_data:wb_Jump?(wb_pc_plus4+32'd4):wb_alu_res;
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    assign pc_en_loc=1'b1;
-    assign ex_opA=ex_AluSrcA?ex_pc:ex_rd1;
-    assign ex_opB=ex_AluSrc?ex_imm:ex_rd2;
-    assign next_pc=(ex_Jump&ex_Branch)?(ex_alu_res&~32'd1):(~ex_Jump&ex_Branch)?((ex_cmp)?ex_alu_res:(ex_pc+32'd4)):(ex_Jump&~ex_Branch)?ex_alu_res:(ex_pc+32'd4);
-    assign mem_alu_res=ex_alu_res;
-    assign ex_data=ex_rd2;
     
 
 
