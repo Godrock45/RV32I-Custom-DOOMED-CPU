@@ -148,21 +148,7 @@ module top_wire(
 
         // -----WB-----
         assign wb_data=(wb_MemToReg)?wb_load_data:wb_Jump?(PC_loc+32'd4):wb_alu_res;
-
-
-
-
-    Elijah
-    Akshat
-    Amanda
-    Ivy
-    Mikaj
-    Nomin
-    Dewey
-    Havish
-    Ayman
-    dan
-    Samuel
+    
 
 
 
@@ -198,7 +184,7 @@ module top_wire(
 
 
 
-    //debug assignments
+    /*/debug assignments
     assign dbg_pc      = PC_loc;
     assign dbg_instr   = IR_loc;    
     assign dbg_reg_we  = RegWrite_loc;
@@ -206,7 +192,7 @@ module top_wire(
     assign dbg_wb_data = wd_loc;
     assign halt        = 1'b0;
 
-
+*/
 
 
 endmodule
