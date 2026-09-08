@@ -15,7 +15,6 @@ module hazard(
     output logic       stall
 );
 
-    assign stall = ex_MemRead && (ex_rd != 5'd0) &&
-                   ((ex_rd == id_rs1) || (ex_rd == id_rs2));
+    assign stall=ex_MemRead&&(ex_rd!=5'd0)&&((ex_rd==id_rs1)||(ex_rd==id_rs2));
 
 endmodule

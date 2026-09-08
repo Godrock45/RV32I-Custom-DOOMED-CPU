@@ -18,13 +18,20 @@ module forward(
 );
 
     always_comb begin
-        fwd_a = 2'b00;
-        if      (mem_RegWrite && mem_rd != 5'd0 && mem_rd == ex_rs1) fwd_a = 2'b01;
-        else if (wb_RegWrite  && wb_rd  != 5'd0 && wb_rd  == ex_rs1) fwd_a = 2'b10;
-
-        fwd_b = 2'b00;
-        if      (mem_RegWrite && mem_rd != 5'd0 && mem_rd == ex_rs2) fwd_b = 2'b01;
-        else if (wb_RegWrite  && wb_rd  != 5'd0 && wb_rd  == ex_rs2) fwd_b = 2'b10;
+        fwd_a=2'b00;
+        if (mem_RegWrite&&mem_rd!=5'd0&&mem_rd==ex_rs1)begin
+             fwd_a=2'b01;
+        end
+        else if (wb_RegWrite&&wb_rd!=5'd0&&wb_rd==ex_rs1)begin
+             fwd_a=2'b10;
+        end
+        fwd_b=2'b00;
+        if      (mem_RegWrite&&mem_rd!=5'd0&&mem_rd==ex_rs2)begin
+            fwd_b=2'b01; 
+        end
+        else if (wb_RegWrite&& wb_rd!=5'd0&&wb_rd==ex_rs2)begin
+            fwd_b=2'b10;
+        end
     end
 
 endmodule
