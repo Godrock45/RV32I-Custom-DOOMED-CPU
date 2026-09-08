@@ -11,92 +11,180 @@ module top_wire(
     );
 
 
+    // Fetch
+    logic [31:0] if_pc,if_pc_plus4,if_instr,next_pc;
 
-    logic [31:0] next_PC_loc,PC_loc;
-    logic [31:0] IR_loc;
-    logic pc_en_loc;
-    logic [4:0] rd_loc;
-    logic [4:0] rs1_loc;
-    logic [4:0] rs2_loc;
-    logic [6:0] funct7_loc;
-    logic [2:0] funct3_loc;
-    logic [31:0] imm_loc;
-    logic [6:0] opcode_loc;
-    logic RegWrite_loc;
-    logic AluSrc_loc;
-    logic MemRead_loc;
-    logic MemWrite_loc;
-    logic [3:0] AluCtrl_loc;
-    logic Branch_loc;
-    logic Jump_loc;
-    logic AluSrcA_loc;
-    logic MemToReg_loc;
-    logic [31:0] wd_loc;
-    logic [31:0] rd1_loc;
-    logic [31:0] rd2_loc;
-    logic cmp_loc;
-    logic [31:0] res_loc;
-    logic [31:0] mem_dat_loc;
-    logic [31:0] addr_loc;
-    logic [31:0] dat_loc;
-    logic [31:0] OpA_loc,OpB_loc;
-    logic [7:0] b;
-    logic [15:0]h;
-    logic [31:0] load_data;
+    // IF/ID
+    logic [31:0]id_pc,id_pc_plus4,id_instr;
 
+    // ID
+    logic[6:0] id_opcode, id_funct7;
+    logic[2:0] id_funct3;
+    logic[4:0] id_rs1,id_rs2,id_rd;
+    logic[31:0]id_imm,id_rd1,id_rd2;
+    logic id_RegWrite,id_AluSrc,id_AluSrcA,id_MemRead,id_MemWrite,id_MemToReg,id_Branch,id_Jump;
+    logic [3:0] id_AluCtrl;
 
+    // ID/EX
+    logic [31:0] ex_pc, ex_pc_plus4, ex_rd1, ex_rd2, ex_imm;
+    logic [4:0] ex_rs1, ex_rs2, ex_rd;
+    logic [2:0] ex_funct3;
+    logic [3:0] ex_AluCtrl;
+    logic ex_RegWrite, ex_AluSrc, ex_AluSrcA, ex_MemRead, ex_MemWrite, ex_MemToReg, ex_Branch, ex_Jump;
+    logic [31:0] ex_opA,ex_opB,ex_alu_res;
+    logic ex_cmp;
 
+    // EX/MEM
+    logic [31:0] mem_alu_res, mem_rd2, mem_pc_plus4, mem_dat, mem_load_data;
+    logic [4:0] mem_rd;
+    logic [2:0] mem_funct3;
+    logic mem_RegWrite, mem_MemRead, mem_MemWrite, mem_MemToReg, mem_Jump;
 
+    // MEM/WB
 
-
-    PrgCo ad(.clk(clk),.rst(rst),.pc_en(pc_en_loc),.next_pc(next_PC_loc),.pc(PC_loc));
-    ROME dc(.PC(PC_loc),.IR(IR_loc));
-    decoder tnt(.instruction(IR_loc),.opcode(opcode_loc),.imm(imm_loc),.rd(rd_loc),.rs1(rs1_loc),.rs2(rs2_loc),.funct7(funct7_loc),.funct3(funct3_loc));
-    control pnp(.Opcode(opcode_loc),.funct3(funct3_loc),.funct7(funct7_loc),.RegWrite(RegWrite_loc),.AluSrc(AluSrc_loc),.MemRead(MemRead_loc),.MemWrite(MemWrite_loc),.AluCtrl(AluCtrl_loc),.Branch(Branch_loc),.Jump(Jump_loc),.AluSrcA(AluSrcA_loc),.MemToReg(MemToReg_loc));
-    registers npn(.clk(clk),.rst(rst),.we(RegWrite_loc),.rs1(rs1_loc),.rs2(rs2_loc),.rd(rd_loc),.wd(wd_loc),.rd1(rd1_loc),.rd2(rd2_loc));
-    comparator mph(.OpA(rd1_loc),.OpB(rd2_loc),.funct3(funct3_loc),.cmp(cmp_loc));
-    ALU tsmc(.OpA(OpA_loc),.OpB(OpB_loc),.ALUCtrl(AluCtrl_loc),.Res(res_loc));
-    memory meme(.clk(clk),.addr(addr_loc),.dat(dat_loc),.funct3(funct3_loc),.write_ena(MemWrite_loc),.mem_dat(mem_dat_loc));
+    logic [31:0] wb_alu_res, wb_load_data, wb_pc_plus4, wb_data;
+    logic [4:0] wb_rd;
+    logic wb_RegWrite, wb_MemToReg, wb_Jump;
 
 
 
 
 
 
-    assign b=mem_dat_loc[8*res_loc[1:0]+:8];
-    assign h=mem_dat_loc[16*res_loc[1]+:16];
-    always_comb begin
-        case(funct3_loc)
-            3'b000:
-                load_data={{24{b[7]}},b[7:0]};
-            3'b001:
-                load_data={{16{h[15]}},h[15:0]};
-            3'b010:
-                load_data=mem_dat_loc;
-            3'b100:
-                load_data={24'b0,b[7:0]};
-            3'b101:
-                load_data={16'b0,h[15:0]};
-            default:
-                load_data=32'b0;
-        endcase
+
+
+    PrgCo ad(.clk(clk),.rst(rst),.pc_en(pc_en_loc),.next_pc(next_pc),.pc(if_pc));
+    ROME dc(.PC(if_pc),.IR(if_instr));
+    decoder tnt(.instruction(id_instr),.opcode(id_opcode),.imm(id_imm),.rd(id_rd),.rs1(id_rs1),.rs2(id_rs2),.funct7(id_funct7),.funct3(id_funct3));
+    control pnp(.Opcode(id_opcode),.funct3(id_funct3),.funct7(id_funct7),.RegWrite(id_RegWrite),.AluSrc(id_AluSrc),.MemRead(id_MemRead),.MemWrite(id_MemWrite),.AluCtrl(id_AluCtrl),.Branch(id_Branch),.Jump(id_Jump),.AluSrcA(id_AluSrcA),.MemToReg(id_MemToReg));
+    registers npn(.clk(clk),.rst(rst),.we(id_RegWrite),.rs1(id_rs1),.rs2(id_rs2),.rd(id_rd),.wd(id_data),.rd1(id_rd1),.rd2(id_rd2));
+    comparator mph(.OpA(ex_rd1),.OpB(ex_rd2),.funct3(ex_funct3),.cmp(ex_cmp));
+    ALU tsmc(.OpA(ex_opA),.OpB(ex_opB),.ALUCtrl(ex_AluCtrl),.Res(ex_alu_res));
+    memory meme(.clk(clk),.addr(mem_alu_res),.dat(mem_rd2),.funct3(mem_funct3),.write_ena(mem_MemWrite),.mem_dat(mem_dat));
+    load_extend ext(.mem_dat(mem_dat),.addr_lo(mem_funct3),.load_data(mem_load_data));
+
+
+
+
+
+    //transitions
+
+    // IF/ID
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            id_pc<=0;
+            id_pc_plus4<=0;
+            id_instr<=0;
+        end else begin
+            id_pc<=if_pc;
+            id_pc_plus4<=if_pc_plus4;
+            id_instr=if_instr;
     end
+    end
+
+    // ID/EX
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            ex_pc<=0;ex_pc_plus4<=0;ex_rd1<=0;ex_rd2=0;ex_imm<=0;ex_rs1=0;
+            ex_rs2<=0;ex_rd<=0;ex_funct3<=0;ex_AluCtrl<=0;ex_RegWrite<=0;
+            ex_AluSrc<=0;ex_AluSrcA<=0;ex_MemRead<=0;ex_MemWrite<=0; ex_MemToReg<=0;
+            ex_Branch<=0;ex_Jump<=0;
+        end
+        else begin
+            ex_pc<=id_pc;    ex_pc_plus4<=id_pc_plus4;
+            ex_rd1<=id_rd1;  ex_rd2<=id_rd2;    ex_imm<=id_imm;
+            ex_rs1<=id_rs1;  ex_rs2<=id_rs2;    ex_rd<=id_rd;
+            ex_funct3<=id_funct3;  ex_AluCtrl<=id_AluCtrl;
+            ex_RegWrite<=id_RegWrite;   ex_AluSrc<=id_AluSrc;
+            ex_AluSrcA<=id_AluSrcA; ex_MemRead<=id_MemRead;
+            ex_MemWrite<=id_MemWrite;   ex_MemToReg<=id_MemToReg;
+            ex_Branch<=id_Branch;   ex_Jump<=id_jump;
+        end
+        end
+        assign ex_opA=ex_AluSrcA?ex_pc:ex_rd1;
+        assign ex_opB=ex_AluSrc?ex_imm:ex_rd2;
+        
+
+        always_comb begin
+            unique case(ex_Branch,ex_Jump)
+                2'b01:
+                    next_pc=ex_alu_res;
+                2'b10:
+                    next_pc=ex_cmp?ex_alu_res:if_pc_plus4;
+                2'b11:
+                    next_pc=ex_alu_res&~32'd1;
+                default:
+                    next_pc=if_pc_plus4;
+            endcase
+        end
+        // -----EX/MEM-----
+        always_ff @(posedge clk)begin
+            if(rst)begin
+                mem_alu_res<=0;  mem_rd2<=0;   mem_pc_plus4<=0;
+                mem_rd<=0;       mem_funct3<=0; mem_RegWrite<=0;
+                mem_MemRead<=0;  mem_MemToReg<=0; mem_Jump<=0;
+            end 
+            else begin
+                mem_alu_res<=ex_alu_res;   mem_rd2 <=ex_rd2;
+                mem_pc_plus4<=ex_pc_plus4;  mem_rd<=ex_rd;
+                mem_funct3<=ex_funct3;  mem_RegWrite<=ex_RegWrite;
+                mem_funct3 <= ex_funct3; mem_MemWrite<=ex_MemWrite;
+                mem_MemToReg<=ex_MemToReg; mem_Jump<=ex_Jump;
+            end
+        end
+        // -----MEM/WB-----
+        always_ff @(posedge clk)begin
+            if(rst)begin
+                wb_alu_res<=0; wb_load_data<=0;  wb_pc_plus4<=0;
+                wb_rd<=0; wb_RegWrite<=0;  wb_MemToReg<=0; wb_Jump<=0;
+            end
+            else begin
+                wb_alu_res<=mem_alu_res;    wb_load_data<=mem_load_data;
+                wb_pc_plus4<=mem_pc_plus4;  wb_rd<=mem_rd;
+                wb_RegWrite<=mem_RegWrite; wb_MemToReg<=mem_MemToReg;
+                wb_Jump<=mem_Jump;
+            end
+        end
+
+        // -----WB-----
+        assign wb_data=(wb_MemToReg)?wb_load_data:wb_Jump?(PC_loc+32'd4):wb_alu_res;
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
     assign pc_en_loc=1'b1;
-    assign OpA_loc=AluSrcA_loc?PC_loc:rd1_loc;
-    assign OpB_loc=AluSrc_loc?imm_loc:rd2_loc;
-    assign next_PC_loc=(Jump_loc&Branch_loc)?(res_loc&~32'd1):(~Jump_loc&Branch_loc)?((cmp_loc)?res_loc:(PC_loc+32'd4)):(Jump_loc&~Branch_loc)?res_loc:(PC_loc+32'd4);
-    assign addr_loc=res_loc;
-    assign dat_loc=rd2_loc;
-    assign wd_loc=(MemToReg_loc)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
+    assign ex_opA=ex_AluSrcA?ex_pc:ex_rd1;
+    assign ex_opB=ex_AluSrc?ex_imm:ex_rd2;
+    assign next_pc=(ex_Jump&ex_Branch)?(ex_alu_res&~32'd1):(~ex_Jump&ex_Branch)?((ex_cmp)?ex_alu_res:(ex_pc+32'd4)):(ex_Jump&~ex_Branch)?ex_alu_res:(ex_pc+32'd4);
+    assign mem_alu_res=ex_alu_res;
+    assign ex_data=ex_rd2;
+    
 
 
 
 
-    //debug assignments
+    /*/debug assignments
     assign dbg_pc      = PC_loc;
     assign dbg_instr   = IR_loc;    
     assign dbg_reg_we  = RegWrite_loc;
@@ -104,7 +192,7 @@ module top_wire(
     assign dbg_wb_data = wd_loc;
     assign halt        = 1'b0;
 
-
+*/
 
 
 endmodule
