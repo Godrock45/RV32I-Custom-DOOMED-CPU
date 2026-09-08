@@ -154,15 +154,14 @@ module top_wire(
 
 
 
-    /*/debug assignments
-    assign dbg_pc      = PC_loc;
-    assign dbg_instr   = IR_loc;    
-    assign dbg_reg_we  = RegWrite_loc;
-    assign dbg_rd      = rd_loc;
-    assign dbg_wb_data = wd_loc;
-    assign halt        = 1'b0;
+    //debug assignments
+    assign dbg_pc      = 0
+    assign dbg_instr   = 0
+    assign dbg_reg_we  = 0
+    assign dbg_rd      = 0
+    assign dbg_wb_data = 0
+    assign halt        = 0
 
-*/
 
 
 endmodule
