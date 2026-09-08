@@ -10,7 +10,7 @@ iverilog -g2012 -o check.vvp \
     ROM_test.sv tb_check.sv \
     ../ALU.sv ../PC.sv ../control.sv ../cmp.sv \
     ../data_mem.sv ../decoder.sv ../registers.sv \
-    ../load_extend.sv ../top.sv \
+    ../load_extend.sv ../forward.sv ../hazard.sv ../top.sv \
     2>&1 | grep -v "sorry:" || true
 
 test -f check.vvp || { echo "COMPILE FAILED"; exit 1; }

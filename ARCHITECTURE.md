@@ -221,16 +221,24 @@ These four wires flow against the pipeline, and they are where all the difficult
 **Verified** as single-cycle, tag `v1.0-singlecycle`: all 37 base integer instructions,
 43 of 43 assertions, at padding levels 0, 1, 2 and 4.
 
-**In progress**, 5-stage pipeline:
+**Pipeline complete.** 46/46 assertions at padding levels 0, 1, 2 and 4.
 
 - [x] boundary spec
 - [x] four pipeline registers
-- [x] `PAD=4` green, plumbing only (43/43)
-- [x] `PAD=2` green (43/43) -- write-first regfile covers RAW distance 3
-- [ ] branch flush  +  MEM/WB to EX forwarding  -> target `PAD=1` (currently 22 failures)
-- [ ] EX/MEM to EX forwarding (EX takes priority over MEM/WB)
-- [ ] load-use stall, freeze PC and IF/ID, bubble ID/EX
-- [ ] `PAD=0` green (currently 21 failures)
+- [x] write-first register file (covers RAW distance 3)
+- [x] branch/jump flush -- clears IF/ID and ID/EX on any PC redirect
+- [x] forwarding: EX/MEM to EX and MEM/WB to EX, EX/MEM taking priority
+- [x] load-use interlock -- freeze PC and IF/ID, bubble ID/EX
+- [x] `PAD=0` green
+
+New modules: `forward.sv` (forwarding unit), `hazard.sv` (load-use interlock).
+Flush is generated in `top.sv`, mirroring the `next_pc` case so the two cannot drift.
+
+Test coverage added alongside: a load-use pair (the one case forwarding cannot fix)
+and a back-to-back double write (verifies EX/MEM beats MEM/WB). Both were confirmed
+to fail when the corresponding logic is removed or inverted.
+
+Next: toolchain, `EBREAK` as a halt signal, then `riscv-tests`.
 
 **Not implemented:** `ECALL` and `EBREAK`, which need CSRs and trap handling.
 `FENCE` decodes as a no-op, which is spec-correct on a single-core in-order machine

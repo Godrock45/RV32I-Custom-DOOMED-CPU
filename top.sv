@@ -11,6 +11,10 @@ module top_wire(
     );
 
 
+    logic flush, stall;
+    logic [1:0]  fwd_a, fwd_b;
+    logic [31:0] fwd_rd1, fwd_rd2;
+
     // Fetch
     logic [31:0] if_pc,if_pc_plus4,if_instr,next_pc;
 
@@ -53,12 +57,12 @@ module top_wire(
 
 
 
-    PrgCo ad(.clk(clk),.rst(rst),.pc_en(1'b1),.next_pc(next_pc),.pc(if_pc));
+    PrgCo ad(.clk(clk),.rst(rst),.pc_en(~stall),.next_pc(next_pc),.pc(if_pc));
     ROME dc(.PC(if_pc),.IR(if_instr));
     decoder tnt(.instruction(id_instr),.opcode(id_opcode),.imm(id_imm),.rd(id_rd),.rs1(id_rs1),.rs2(id_rs2),.funct7(id_funct7),.funct3(id_funct3));
     control pnp(.Opcode(id_opcode),.funct3(id_funct3),.funct7(id_funct7),.RegWrite(id_RegWrite),.AluSrc(id_AluSrc),.MemRead(id_MemRead),.MemWrite(id_MemWrite),.AluCtrl(id_AluCtrl),.Branch(id_Branch),.Jump(id_Jump),.AluSrcA(id_AluSrcA),.MemToReg(id_MemToReg));
     registers npn(.clk(clk),.rst(rst),.we(wb_RegWrite),.rs1(id_rs1),.rs2(id_rs2),.rd(wb_rd),.wd(wb_data),.rd1(id_rd1),.rd2(id_rd2));
-    comparator mph(.OpA(ex_rd1),.OpB(ex_rd2),.funct3(ex_funct3),.cmp(ex_cmp));
+    comparator mph(.OpA(fwd_rd1),.OpB(fwd_rd2),.funct3(ex_funct3),.cmp(ex_cmp));
     ALU tsmc(.OpA(ex_opA),.OpB(ex_opB),.ALUCtrl(ex_AluCtrl),.Res(ex_alu_res));
     memory meme(.clk(clk),.addr(mem_alu_res),.dat(mem_rd2),.funct3(mem_funct3),.write_ena(mem_MemWrite),.mem_dat(mem_dat));
     load_extend ext(.mem_dat(mem_dat),.addr_lo(mem_alu_res[1:0]),.funct3(mem_funct3),.load_data(mem_load_data));
@@ -75,7 +79,7 @@ module top_wire(
             id_pc<=0;
             id_pc_plus4<=0;
             id_instr<=0;
-        end else begin
+        end else if(!stall) begin
             id_pc<=if_pc;
             id_pc_plus4<=if_pc_plus4;
             id_instr<=if_instr;
@@ -84,7 +88,7 @@ module top_wire(
 
     // ID/EX
     always_ff @(posedge clk) begin
-        if(rst||flush) begin
+        if(rst||flush||stall) begin
             ex_pc<=0;ex_pc_plus4<=0;ex_rd1<=0;ex_rd2<=0;ex_imm<=0;ex_rs1<=0;
             ex_rs2<=0;ex_rd<=0;ex_funct3<=0;ex_AluCtrl<=0;ex_RegWrite<=0;
             ex_AluSrc<=0;ex_AluSrcA<=0;ex_MemRead<=0;ex_MemWrite<=0; ex_MemToReg<=0;
@@ -101,8 +105,29 @@ module top_wire(
             ex_Branch<=id_Branch;   ex_Jump<=id_Jump;
         end
         end
-        assign ex_opA=ex_AluSrcA?ex_pc:ex_rd1;
-        assign ex_opB=ex_AluSrc?ex_imm:ex_rd2;
+        hazard hz(.ex_MemRead(ex_MemRead),.ex_rd(ex_rd),
+                  .id_rs1(id_rs1),.id_rs2(id_rs2),.stall(stall));
+
+        forward fwd(.ex_rs1(ex_rs1),.ex_rs2(ex_rs2),
+                    .mem_rd(mem_rd),.wb_rd(wb_rd),
+                    .mem_RegWrite(mem_RegWrite),.wb_RegWrite(wb_RegWrite),
+                    .fwd_a(fwd_a),.fwd_b(fwd_b));
+
+        always_comb begin
+            case(fwd_a)
+                2'b01:   fwd_rd1 = mem_alu_res;   // from EX/MEM
+                2'b10:   fwd_rd1 = wb_data;       // from MEM/WB (mux output, not wb_alu_res)
+                default: fwd_rd1 = ex_rd1;
+            endcase
+            case(fwd_b)
+                2'b01:   fwd_rd2 = mem_alu_res;
+                2'b10:   fwd_rd2 = wb_data;
+                default: fwd_rd2 = ex_rd2;
+            endcase
+        end
+
+        assign ex_opA=ex_AluSrcA?ex_pc:fwd_rd1;
+        assign ex_opB=ex_AluSrc?ex_imm:fwd_rd2;
         
 
         always_comb begin
@@ -136,14 +161,14 @@ module top_wire(
 
         // -----EX/MEM-----
         always_ff @(posedge clk)begin
-            if(rst||flush)begin
+            if(rst)begin
                 mem_alu_res<=0;  mem_rd2<=0;   mem_pc_plus4<=0;
                 mem_rd<=0;       mem_funct3<=0; mem_RegWrite<=0;
                 mem_MemRead<=0;  mem_MemToReg<=0; mem_Jump<=0; mem_MemWrite<=0;
 
             end 
             else begin
-                mem_alu_res<=ex_alu_res;   mem_rd2 <=ex_rd2;
+                mem_alu_res<=ex_alu_res;   mem_rd2 <=fwd_rd2;
                 mem_pc_plus4<=ex_pc_plus4;  mem_rd<=ex_rd;
                 mem_funct3<=ex_funct3;  mem_RegWrite<=ex_RegWrite; mem_MemWrite<=ex_MemWrite;
                 mem_MemToReg<=ex_MemToReg; mem_Jump<=ex_Jump;
@@ -151,7 +176,7 @@ module top_wire(
         end
         // -----MEM/WB-----
         always_ff @(posedge clk)begin
-            if(rst||flush)begin
+            if(rst)begin
                 wb_alu_res<=0; wb_load_data<=0;  wb_pc_plus4<=0;
                 wb_rd<=0; wb_RegWrite<=0;  wb_MemToReg<=0; wb_Jump<=0;
             end

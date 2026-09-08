@@ -100,16 +100,25 @@ initial begin
     registan[92]=32'h02100A13;
     registan[93]=32'h01409A33;
     registan[94]=32'h05402423;
-    registan[95]=32'h00300A13;
-    registan[96]=32'h00000493;
-    registan[97]=32'h00148493;
-    registan[98]=32'hFFFA0A13;
-    registan[99]=32'hFE0A1CE3;  // backward branch
-    registan[100]=32'h00000317;
-    registan[101]=32'h00D303E7;  // target has bit0 set -> must be masked
-    registan[102]=32'h001E0E13;  // poison
-    registan[103]=32'h00000417;
-    registan[104]=32'h00000063;  // self-loop
+    registan[95]=32'h05A00A13;
+    registan[96]=32'h05402623;
+    registan[97]=32'h04C02A03;  // load
+    registan[98]=32'h001A0A13;  // USE immediately -> requires load-use stall
+    registan[99]=32'h05402823;
+    registan[100]=32'h01100A13;
+    registan[101]=32'h02200A13;
+    registan[102]=32'h000A0A13;  // reads x20: EX/MEM (0x22) must beat MEM/WB (0x11)
+    registan[103]=32'h05402A23;
+    registan[104]=32'h00300A13;
+    registan[105]=32'h00000493;
+    registan[106]=32'h00148493;
+    registan[107]=32'hFFFA0A13;
+    registan[108]=32'hFE0A1CE3;  // backward branch
+    registan[109]=32'h00000317;
+    registan[110]=32'h00D303E7;  // target has bit0 set -> must be masked
+    registan[111]=32'h001E0E13;  // poison
+    registan[112]=32'h00000417;
+    registan[113]=32'h00000063;  // self-loop
 end
 assign IR=registan[PC[9:2]];
 endmodule
