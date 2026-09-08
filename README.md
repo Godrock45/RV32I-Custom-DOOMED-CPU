@@ -170,7 +170,7 @@ Signals worth watching: `PC_loc`, `IR_loc`, `OpA_loc`, `OpB_loc`, `res_loc`, `cm
 - [x] Single-cycle RV32I core
 - [x] Sub-word loads and stores with sign/zero extension
 - [x] Self-checking test harness — 43/43
-- [ ] 5-stage pipeline: forwarding, load-use interlock, branch flush
+- [x] 5-stage pipeline: forwarding, load-use interlock, branch flush
 - [ ] `ECALL` / `EBREAK` + minimal CSRs
 - [ ] `riscv-tests` — 40/40 `rv32ui`
 - [ ] Differential co-simulation against Spike
