@@ -71,7 +71,7 @@ module top_wire(
     assign if_pc_plus4 = if_pc + 32'd4;
     // IF/ID
     always_ff @(posedge clk) begin
-        if(rst) begin
+        if(rst||flush) begin
             id_pc<=0;
             id_pc_plus4<=0;
             id_instr<=0;
@@ -84,7 +84,7 @@ module top_wire(
 
     // ID/EX
     always_ff @(posedge clk) begin
-        if(rst) begin
+        if(rst||flush) begin
             ex_pc<=0;ex_pc_plus4<=0;ex_rd1<=0;ex_rd2<=0;ex_imm<=0;ex_rs1<=0;
             ex_rs2<=0;ex_rd<=0;ex_funct3<=0;ex_AluCtrl<=0;ex_RegWrite<=0;
             ex_AluSrc<=0;ex_AluSrcA<=0;ex_MemRead<=0;ex_MemWrite<=0; ex_MemToReg<=0;
@@ -117,9 +117,26 @@ module top_wire(
                     next_pc=if_pc_plus4;
             endcase
         end
+        
+        always_comb begin
+            unique case({ex_Branch,ex_Jump})
+                2'b01:
+                    flush=1'b1;
+                2'b10:
+                    flush=ex_cmp;
+                2'b11:
+                    flush=1'b1;
+                default:
+                    flush=1'b0;        
+            endcase
+        end
+
+
+
+
         // -----EX/MEM-----
         always_ff @(posedge clk)begin
-            if(rst)begin
+            if(rst||flush)begin
                 mem_alu_res<=0;  mem_rd2<=0;   mem_pc_plus4<=0;
                 mem_rd<=0;       mem_funct3<=0; mem_RegWrite<=0;
                 mem_MemRead<=0;  mem_MemToReg<=0; mem_Jump<=0; mem_MemWrite<=0;
@@ -134,7 +151,7 @@ module top_wire(
         end
         // -----MEM/WB-----
         always_ff @(posedge clk)begin
-            if(rst)begin
+            if(rst||flush)begin
                 wb_alu_res<=0; wb_load_data<=0;  wb_pc_plus4<=0;
                 wb_rd<=0; wb_RegWrite<=0;  wb_MemToReg<=0; wb_Jump<=0;
             end
