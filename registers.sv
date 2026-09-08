@@ -11,8 +11,8 @@ module registers(
 );
 logic [31:0] registers[31:0];
 always_comb begin
-    rd1=registers[rs1];
-    rd2=registers[rs2];
+    rd1=(we&&rd==rs1&&rs1!=5'd0)?wd:registers[rs1];
+    rd2=(we&&rd==rs2&&rs2!=5'd0)?wd:registers[rs2];
 end
 
 
