@@ -67,6 +67,109 @@ module top_wire(
 
 
 
+    //transitions
+
+    // IF/ID
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            id_pc<=0;
+            id_pc_plus4<=0;
+            id_instr<=0;
+        end else begin
+            id_pc<=if_pc;
+            id_pc_plus4<=if_pc_plus4;
+            id_instr=if_instr;
+    end
+    end
+
+    // ID/EX
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            ex_pc<=0;ex_pc_plus4<=0;ex_rd1<=0;ex_rd2=0;ex_imm<=0;ex_rs1=0;
+            ex_rs2<=0;ex_rd<=0;ex_funct3<=0;ex_AluCtrl<=0;ex_RegWrite<=0;
+            ex_AluSrc<=0;ex_AluSrcA<=0;ex_MemRead<=0;ex_MemWrite<=0; ex_MemToReg<=0;
+            ex_Branch<=0;ex_Jump<=0;
+        end
+        else begin
+            ex_pc<=id_pc;    ex_pc_plus4<=id_pc_plus4;
+            ex_rd1<=id_rd1;  ex_rd2<=id_rd2;    ex_imm<=id_imm;
+            ex_rs1<=id_rs1;  ex_rs2<=id_rs2;    ex_rd<=id_rd;
+            ex_funct3<=id_funct3;  ex_AluCtrl<=id_AluCtrl;
+            ex_RegWrite<=id_RegWrite;   ex_AluSrc<=id_AluSrc;
+            ex_AluSrcA<=id_AluSrcA; ex_MemRead<=id_MemRead;
+            ex_MemWrite<=id_MemWrite;   ex_MemToReg<=id_MemToReg;
+            ex_Branch<=id_Branch;   ex_Jump<=id_jump;
+        end
+        end
+        assign ex_opA=ex_AluSrcA?ex_pc:ex_rd1;
+        assign ex_opB=ex_AluSrc?ex_imm:ex_rd2;
+        
+
+        always_comb begin
+            unique case(ex_Branch,ex_Jump)
+                2'b01:
+                    next_pc=ex_alu_res;
+                2'b10:
+                    next_pc=ex_cmp?ex_alu_res:if_pc_plus4;
+                2'b11:
+                    next_pc=ex_alu_res&~32'd1;
+                default:
+                    next_pc=if_pc_plus4;
+            endcase
+        end
+        // -----EX/MEM-----
+        always_ff @(posedge clk)begin
+            if(rst)begin
+                mem_alu_res<=0;  mem_rd2<=0;   mem_pc_plus4<=0;
+                mem_rd<=0;       mem_funct3<=0; mem_RegWrite<=0;
+                mem_MemRead<=0;  mem_MemToReg<=0; mem_Jump<=0;
+            end 
+            else begin
+                mem_alu_res<=ex_alu_res;   mem_rd2 <=ex_rd2;
+                mem_pc_plus4<=ex_pc_plus4;  mem_rd<=ex_rd;
+                mem_funct3<=ex_funct3;  mem_RegWrite<=ex_RegWrite;
+                mem_funct3 <= ex_funct3; mem_MemWrite<=ex_MemWrite;
+                mem_MemToReg<=ex_MemToReg; mem_Jump<=ex_Jump;
+            end
+        end
+        // -----MEM/WB-----
+        always_ff @(posedge clk)begin
+            if(rst)begin
+                wb_alu_res<=0; wb_load_data<=0;  wb_pc_plus4<=0;
+                wb_rd<=0; wb_RegWrite<=0;  wb_MemToReg<=0; wb_Jump<=0;
+            end
+            else begin
+                wb_alu_res<=mem_alu_res;    wb_load_data<=mem_load_data;
+                wb_pc_plus4<=mem_pc_plus4;  wb_rd<=mem_rd;
+                wb_RegWrite<=mem_RegWrite; wb_MemToReg<=mem_MemToReg;
+                wb_Jump<=mem_Jump;
+            end
+        end
+
+        // -----WB-----
+        assign wb_data=(wb_MemToReg)?wb_load_data:wb_Jump?(PC_loc+32'd4):wb_alu_res;
+
+
+
+
+    Elijah
+    Akshat
+    Amanda
+    Ivy
+    Mikaj
+    Nomin
+    Dewey
+    Havish
+    Ayman
+    dan
+    Samuel
+
+
+
+
+
+
+
 
 
 
@@ -90,7 +193,7 @@ module top_wire(
     assign next_pc=(ex_Jump&ex_Branch)?(ex_alu_res&~32'd1):(~ex_Jump&ex_Branch)?((ex_cmp)?ex_alu_res:(ex_pc+32'd4)):(ex_Jump&~ex_Branch)?ex_alu_res:(ex_pc+32'd4);
     assign mem_alu_res=ex_alu_res;
     assign ex_data=ex_rd2;
-    assign id_load_data=(ex_MemToReg)?load_data:Jump_loc?(PC_loc+32'd4):res_loc;
+    
 
 
 
