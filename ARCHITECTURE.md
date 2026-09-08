@@ -224,12 +224,13 @@ These four wires flow against the pipeline, and they are where all the difficult
 **In progress**, 5-stage pipeline:
 
 - [x] boundary spec
-- [ ] four pipeline registers
-- [ ] `PAD=4` green, plumbing only
-- [ ] branch flush
-- [ ] forwarding, EX/MEM to EX and MEM/WB to EX, EX taking priority
+- [x] four pipeline registers
+- [x] `PAD=4` green, plumbing only (43/43)
+- [x] `PAD=2` green (43/43) -- write-first regfile covers RAW distance 3
+- [ ] branch flush  +  MEM/WB to EX forwarding  -> target `PAD=1` (currently 22 failures)
+- [ ] EX/MEM to EX forwarding (EX takes priority over MEM/WB)
 - [ ] load-use stall, freeze PC and IF/ID, bubble ID/EX
-- [ ] `PAD=0` green
+- [ ] `PAD=0` green (currently 21 failures)
 
 **Not implemented:** `ECALL` and `EBREAK`, which need CSRs and trap handling.
 `FENCE` decodes as a no-op, which is spec-correct on a single-core in-order machine

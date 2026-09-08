@@ -61,7 +61,7 @@ module top_wire(
     comparator mph(.OpA(ex_rd1),.OpB(ex_rd2),.funct3(ex_funct3),.cmp(ex_cmp));
     ALU tsmc(.OpA(ex_opA),.OpB(ex_opB),.ALUCtrl(ex_AluCtrl),.Res(ex_alu_res));
     memory meme(.clk(clk),.addr(mem_alu_res),.dat(mem_rd2),.funct3(mem_funct3),.write_ena(mem_MemWrite),.mem_dat(mem_dat));
-    load_extend ext(.mem_dat(mem_dat),.addr_lo(mem_funct3),.load_data(mem_load_data));
+    load_extend ext(.mem_dat(mem_dat),.addr_lo(mem_alu_res[1:0]),.funct3(mem_funct3),.load_data(mem_load_data));
 
 
 
@@ -147,7 +147,7 @@ module top_wire(
         end
 
         // -----WB-----
-        assign wb_data=(wb_MemToReg)?wb_load_data:wb_Jump?(wb_pc_plus4+32'd4):wb_alu_res;
+        assign wb_data=(wb_MemToReg)?wb_load_data:wb_Jump?wb_pc_plus4:wb_alu_res;
     
     
 
@@ -155,12 +155,12 @@ module top_wire(
 
 
     //debug assignments
-    assign dbg_pc      = 0
-    assign dbg_instr   = 0
-    assign dbg_reg_we  = 0
-    assign dbg_rd      = 0
-    assign dbg_wb_data = 0
-    assign halt        = 0
+    assign dbg_pc      = 0;
+    assign dbg_instr   = 0;
+    assign dbg_reg_we  = 0;
+    assign dbg_rd      = 0;
+    assign dbg_wb_data = 0;
+    assign halt        = 0;
 
 
 
