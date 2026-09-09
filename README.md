@@ -2,8 +2,15 @@
 
 A 32-bit RISC-V processor written from scratch in SystemVerilog.
 
-**Status:** single-cycle core complete — all 37 RV32I base integer instructions implemented and verified, 43/43 assertions passing.
-**Next:** 5-stage pipeline with forwarding and hazard detection → `riscv-tests` → run DOOM on it.
+**Status:** 5-stage pipelined core — all 37 RV32I base integer instructions implemented and verified, 46/46 assertions passing at every padding level.
+**Next:** toolchain → `riscv-tests` → memory map and framebuffer → run DOOM on it.
+
+```
+rtl/       12 SystemVerilog modules — the processor
+verif/     self-checking test harness (Python assembler + generator + testbenches)
+results/   archived pass/fail tables, one per padding level
+docs/      architecture reference, test plan, status and roadmap
+```
 
 ---
 
@@ -67,6 +74,22 @@ flowchart LR
 
 **Writeback select:** `MemToReg` → load data, else `Jump` → `PC + 4`, else ALU result.
 
+### Pipeline
+
+Five stages — IF, ID, EX, MEM, WB — with four pipeline registers. Control signals
+ride the registers alongside their instruction, which is why `control.sv` needed
+no changes when the core was pipelined.
+
+| hazard | handled by |
+|---|---|
+| RAW at distance 1 | EX/MEM→EX forwarding |
+| RAW at distance 2 | MEM/WB→EX forwarding |
+| RAW at distance 3 | write-first register file |
+| load-use | one-cycle interlock: freeze PC and IF/ID, bubble ID/EX |
+| taken branch or jump | flush IF/ID and ID/EX (branches resolve in EX) |
+
+When both forwarding paths match, EX/MEM wins — it holds the more recent write.
+
 ---
 
 ## Design decisions
@@ -89,38 +112,42 @@ Result: **9 control signals** total.
 
 | file | module | role |
 |---|---|---|
-| `top.sv` | `top_wire` | datapath wiring, muxes, load extend |
-| `PC.sv` | `PrgCo` | program counter |
-| `ROM.sv` | `ROME` | instruction memory |
-| `decoder.sv` | `decoder` | field extraction, immediate reassembly |
-| `control.sv` | `control` | opcode → control signals |
-| `registers.sv` | `registers` | 32×32 register file, `x0` write-guarded |
-| `ALU.sv` | `ALU` | 10 operations, `{funct7[5], funct3}` encoded |
-| `cmp.sv` | `comparator` | branch condition, signed/unsigned |
-| `data_mem.sv` | `memory` | byte/halfword/word access, misalignment guards |
+| `rtl/top.sv` | `top_wire` | stage wiring, pipeline registers, muxes, flush |
+| `rtl/PC.sv` | `PrgCo` | program counter |
+| `rtl/ROM.sv` | `ROME` | instruction memory |
+| `rtl/decoder.sv` | `decoder` | field extraction, immediate reassembly |
+| `rtl/control.sv` | `control` | opcode → control signals |
+| `rtl/registers.sv` | `registers` | 32×32 register file, `x0` write-guarded |
+| `rtl/ALU.sv` | `ALU` | 10 operations, `{funct7[5], funct3}` encoded |
+| `rtl/cmp.sv` | `comparator` | branch condition, signed/unsigned |
+| `rtl/data_mem.sv` | `memory` | byte/halfword/word access, misalignment guards |
+| `rtl/load_extend.sv` | `load_extend` | byte-lane select + sign/zero extension |
+| `rtl/forward.sv` | `forward` | EX/MEM→EX and MEM/WB→EX operand bypass |
+| `rtl/hazard.sv` | `hazard` | load-use interlock |
 
 ---
 
 ## Verification
 
-`test/` contains a self-checking harness built from scratch:
+`verif/` contains a self-checking harness built from scratch:
 
 | file | purpose |
 |---|---|
 | `asm.py` | RV32I assembler — encoders for all six instruction formats |
-| `gen_test.py` | generates a 105-instruction test program + expected register/memory state |
+| `gen_test.py` | generates a 114-instruction test program + expected register/memory state |
 | `gen_demo.py` | generates a short, readable 30-instruction demo for waveform viewing |
 | `tb_check.sv` | runs to completion, dumps all registers and memory |
 | `tb_wave.sv` | same, plus VCD output and a per-instruction commit log |
 | `check.py` | diffs simulator state against expectations |
 | `run.sh` | the whole loop in one command |
+| `run_wave.sh` | builds the demo program and emits `wave.vcd` |
 
 ```sh
-cd test && sh run.sh
+cd verif && sh run.sh
 ```
 
 ```
-checked 43 values, 0 failures
+checked 46 values, 0 failures
 ```
 
 ### Coverage
@@ -147,7 +174,7 @@ Requires [Icarus Verilog](https://steveicarus.github.io/iverilog/) and Python 3.
 
 **Full verification:**
 ```sh
-cd test && sh run.sh
+cd verif && sh run.sh
 ```
 
 **Waveform demo** (30-instruction program, retires at 325 ns):
@@ -169,8 +196,9 @@ Signals worth watching: `PC_loc`, `IR_loc`, `OpA_loc`, `OpB_loc`, `res_loc`, `cm
 
 - [x] Single-cycle RV32I core
 - [x] Sub-word loads and stores with sign/zero extension
-- [x] Self-checking test harness — 43/43
-- [ ] 5-stage pipeline: forwarding, load-use interlock, branch flush
+- [x] Self-checking test harness — 46/46
+- [x] 5-stage pipeline: forwarding, load-use interlock, branch flush
+- [ ] Toolchain: `riscv-none-elf-gcc`, linker script, hex conversion
 - [ ] `ECALL` / `EBREAK` + minimal CSRs
 - [ ] `riscv-tests` — 40/40 `rv32ui`
 - [ ] Differential co-simulation against Spike
@@ -178,3 +206,5 @@ Signals worth watching: `PC_loc`, `IR_loc`, `OpA_loc`, `OpB_loc`, `res_loc`, `cm
 - [ ] Memory map, framebuffer, timer, keyboard
 - [ ] Run a game on it
 - [ ] Run DOOM on it
+
+See [`docs/STATUS.md`](docs/STATUS.md) for the full roadmap and the reasoning behind the order.
