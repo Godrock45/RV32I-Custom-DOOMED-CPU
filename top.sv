@@ -66,6 +66,8 @@ module top_wire(
     ALU tsmc(.OpA(ex_opA),.OpB(ex_opB),.ALUCtrl(ex_AluCtrl),.Res(ex_alu_res));
     memory meme(.clk(clk),.addr(mem_alu_res),.dat(mem_rd2),.funct3(mem_funct3),.write_ena(mem_MemWrite),.mem_dat(mem_dat));
     load_extend ext(.mem_dat(mem_dat),.addr_lo(mem_alu_res[1:0]),.funct3(mem_funct3),.load_data(mem_load_data));
+    hazard hz(.ex_MemRead(ex_MemRead),.ex_rd(ex_rd),.id_rs1(id_rs1),.id_rs2(id_rs2),.stall(stall));
+    forward fwd(.ex_rs1(ex_rs1),.ex_rs2(ex_rs2),.mem_rd(mem_rd),.wb_rd(wb_rd),.mem_RegWrite(mem_RegWrite),.wb_RegWrite(wb_RegWrite),.fwd_a(fwd_a),.fwd_b(fwd_b));
 
 
 
@@ -105,13 +107,6 @@ module top_wire(
             ex_Branch<=id_Branch;   ex_Jump<=id_Jump;
         end
         end
-        hazard hz(.ex_MemRead(ex_MemRead),.ex_rd(ex_rd),
-                  .id_rs1(id_rs1),.id_rs2(id_rs2),.stall(stall));
-
-        forward fwd(.ex_rs1(ex_rs1),.ex_rs2(ex_rs2),
-                    .mem_rd(mem_rd),.wb_rd(wb_rd),
-                    .mem_RegWrite(mem_RegWrite),.wb_RegWrite(wb_RegWrite),
-                    .fwd_a(fwd_a),.fwd_b(fwd_b));
 
         always_comb begin
             case(fwd_a)
@@ -157,8 +152,6 @@ module top_wire(
         end
 
 
-
-
         // -----EX/MEM-----
         always_ff @(posedge clk)begin
             if(rst)begin
@@ -191,9 +184,6 @@ module top_wire(
         // -----WB-----
         assign wb_data=(wb_MemToReg)?wb_load_data:wb_Jump?wb_pc_plus4:wb_alu_res;
     
-    
-
-
 
 
     //debug assignments

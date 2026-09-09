@@ -11,8 +11,8 @@ module forward(
     input  logic [4:0] ex_rs2,
     input  logic [4:0] mem_rd,
     input  logic [4:0] wb_rd,
-    input  logic       mem_RegWrite,
-    input  logic       wb_RegWrite,
+    input  logic mem_RegWrite,
+    input  logic wb_RegWrite,
     output logic [1:0] fwd_a,        // 00 = ex_rd1, 01 = EX/MEM, 10 = MEM/WB
     output logic [1:0] fwd_b
 );
@@ -20,10 +20,10 @@ module forward(
     always_comb begin
         fwd_a=2'b00;
         if (mem_RegWrite&&mem_rd!=5'd0&&mem_rd==ex_rs1)begin
-             fwd_a=2'b01;
+            fwd_a=2'b01;
         end
         else if (wb_RegWrite&&wb_rd!=5'd0&&wb_rd==ex_rs1)begin
-             fwd_a=2'b10;
+            fwd_a=2'b10;
         end
         fwd_b=2'b00;
         if      (mem_RegWrite&&mem_rd!=5'd0&&mem_rd==ex_rs2)begin
