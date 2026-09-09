@@ -208,3 +208,4 @@ Signals worth watching: `PC_loc`, `IR_loc`, `OpA_loc`, `OpB_loc`, `res_loc`, `cm
 - [ ] Run DOOM on it
 
 See [`docs/STATUS.md`](docs/STATUS.md) for the full roadmap and the reasoning behind the order.
+
