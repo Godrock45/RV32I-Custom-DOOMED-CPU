@@ -147,6 +147,23 @@ e(add("x20","x0","x0")); e(sw("x20",17*4,"x0")); MEXP[17] = 0
 e(addi("x20","x0",33))
 e(sll("x20","x1","x20")); e(sw("x20",18*4,"x0")); MEXP[18] = 5 << 1
 
+# (e) LOAD-USE hazard -- the one case forwarding cannot fix. The loaded value
+#     does not exist until MEM completes, so a consumer one instruction later
+#     must be stalled for a cycle.
+e(addi("x20","x0",0x5A))
+e(sw("x20",19*4,"x0"));                      MEXP[19] = 0x5A
+e(lw("x20",19*4,"x0"), "load")
+e(addi("x20","x20",1), "USE immediately -> requires load-use stall")
+e(sw("x20",20*4,"x0"));                      MEXP[20] = 0x5B
+
+# (f) forwarding PRIORITY -- two back-to-back writes to the same register.
+#     EX/MEM must win over MEM/WB: the nearer producer holds the newer value.
+#     If the priority is inverted this reads 0x11 instead of 0x22.
+e(addi("x20","x0",0x11))
+e(addi("x20","x0",0x22))
+e(addi("x20","x20",0), "reads x20: EX/MEM (0x22) must beat MEM/WB (0x11)")
+e(sw("x20",21*4,"x0"));                      MEXP[21] = 0x22
+
 # (c) BACKWARD branch -- negative B-type offset, i.e. a real loop
 e(addi("x20","x0",3))                       # loop counter
 e(addi("x9","x0",0))                        # iterations actually executed
