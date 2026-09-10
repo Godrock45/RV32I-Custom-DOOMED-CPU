@@ -1,0 +1,4 @@
+# Lattice ECP5 synthesis for place-and-route timing. Run inside a make_core.py directory.
+read_verilog -sv ALU.sv PC.sv control.sv cmp.sv decoder.sv registers.sv load_extend.sv forward.sv hazard.sv core_synth.sv
+synth_ecp5 -top core_synth -json core_ecp5.json
+tee -o stat_ecp5.txt stat

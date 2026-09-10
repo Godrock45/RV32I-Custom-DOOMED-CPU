@@ -55,3 +55,15 @@ next level down.
 See [`../docs/TESTPLAN.md`](../docs/TESTPLAN.md) for the row-by-row mapping —
 which register or memory word proves which piece of functionality, and what is
 deliberately not covered.
+
+---
+
+## Metrics
+
+| file | produced by | contents |
+|---|---|---|
+| `cpi.txt` | `verif/metrics/run_cpi.sh` | CPI, IPC and hazard breakdown for nine workloads, plus the three consistency checks |
+| `synth.txt` | `verif/metrics/run_synth.sh` | ECP5 and iCE40 Fmax and area per build. One line per run, under a dated header. |
+
+What these numbers mean, and how they were measured:
+[`../docs/METRICS.md`](../docs/METRICS.md).

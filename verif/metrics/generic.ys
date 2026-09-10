@@ -1,0 +1,11 @@
+# Technology-independent synthesis: per-module area and logic depth.
+# Run inside a make_core.py directory.
+read_verilog -sv ALU.sv PC.sv control.sv cmp.sv decoder.sv registers.sv load_extend.sv forward.sv hazard.sv core_synth.sv
+synth -top core_synth
+tee -o stat_hier.txt stat
+flatten
+opt -full
+abc -g AND,NAND,OR,NOR,XOR,XNOR,ANDNOT,ORNOT,MUX
+opt_clean
+tee -o stat_flat.txt stat
+tee -o ltp.txt ltp -noff

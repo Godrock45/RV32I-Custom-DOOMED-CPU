@@ -1,0 +1,5 @@
+# run_synth.sh  2026-09-10 14:55  ECP5 speed 6, seeds: 1
+baseline      ECP5-85F-6  LUT4=3931  FF=1549  LUTRAM=    Fmax MHz: 65.92
+baseline      iCE40-HX8K   LUT4=2972  Fmax MHz: 46.71
+baseline      generic      logic depth: 76 levels
+combo         ECP5-85F-6  LUT4=2233  FF=525   LUTRAM=32  Fmax MHz: 66.59

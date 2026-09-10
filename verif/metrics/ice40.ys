@@ -1,0 +1,4 @@
+# Lattice iCE40 synthesis -- a low-cost, low-speed data point. Run inside a make_core.py directory.
+read_verilog -sv ALU.sv PC.sv control.sv cmp.sv decoder.sv registers.sv load_extend.sv forward.sv hazard.sv core_synth.sv
+synth_ice40 -top core_synth -json core_ice40.json
+tee -o stat_ice40.txt stat
