@@ -7,9 +7,9 @@ A 32-bit RISC-V processor written from scratch in SystemVerilog.
 
 ```
 rtl/       12 SystemVerilog modules — the processor
-verif/     self-checking test harness (Python assembler + generator + testbenches)
-results/   archived pass/fail tables, one per padding level
-docs/      architecture reference, test plan, status and roadmap
+verif/     self-checking test harness; verif/metrics/ measures CPI, Fmax and area
+results/   archived pass/fail tables, CPI and synthesis results
+docs/      architecture reference, test plan, status and roadmap, metrics
 ```
 
 ---
@@ -179,16 +179,22 @@ cd verif && sh run.sh
 
 **Waveform demo** (30-instruction program, retires at 325 ns):
 ```sh
-cd test
-python gen_demo.py
-iverilog -g2012 -o demo.vvp ROM_demo.sv tb_wave.sv \
-    ../ALU.sv ../PC.sv ../control.sv ../cmp.sv \
-    ../data_mem.sv ../decoder.sv ../registers.sv ../top.sv
-vvp demo.vvp
-gtkwave wave.vcd
+cd verif && sh run_wave.sh
 ```
 
-Signals worth watching: `PC_loc`, `IR_loc`, `OpA_loc`, `OpB_loc`, `res_loc`, `cmp_loc`, `next_PC_loc`, `wd_loc`.
+Writes `verif/wave.vcd`. Open it in GTKWave, Surfer, or the VaporView extension.
+
+Signals worth watching, under `dut`:
+
+| group | signals |
+|---|---|
+| flow | `if_pc`, `id_instr`, `ex_pc` |
+| pipeline control | `stall`, `flush` |
+| forwarding | `fwd_a`, `fwd_b`, and `ex_rd1` next to `fwd_rd1` |
+| datapath | `ex_alu_res`, `wb_data` |
+
+**Metrics** — CPI, Fmax, critical path and area, with the what-if builds:
+[`docs/METRICS.md`](docs/METRICS.md), reproducible via `verif/metrics/`.
 
 ---
 

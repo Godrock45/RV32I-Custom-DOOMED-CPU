@@ -5,6 +5,8 @@ verif/expected.txt
 verif/result.txt
 verif/*.vvp
 verif/__pycache__/
+verif/metrics/build/
+verif/metrics/__pycache__/
 *.vcd
 *.gtkw
 
