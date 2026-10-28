@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 800" width="1300" height="800" role="img" aria-labelledby="schT schD">
+<title id="schT">top_wire five-stage datapath</title>
+<desc id="schD">Schematic of top_wire. Data flows left to right through PC, instruction ROM, IF/ID, decoder and register file, ID/EX, forwarding and operand muxes, ALU and comparator, EX/MEM, data memory and load extend, MEM/WB, and the write-back mux. Control, hazard and forwarding units sit in a band across the top. Next-PC and flush logic sit in a band at the bottom. Write-back and next PC loop back on their own lanes.</desc>
+<style>
+svg{--sheet:#fbfcfd;--ink:#15223b;--slate:#5b6678;--rule:#cdd5df;--ctl:#1d5fd6;--unused:#9aa3b0;--dot:#c6ced9;--chip:#e4e9f0}
+@media (prefers-color-scheme: dark){svg{--sheet:#121a27;--ink:#d9e2ee;--slate:#8e9ab0;--rule:#2a3648;--ctl:#6ea2ff;--unused:#5b6678;--dot:#243043;--chip:#1d2738}}
+text{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,"DejaVu Sans Mono",monospace;fill:var(--ink)}
+.bg{fill:var(--sheet)} .dot{fill:var(--dot)}
+.blk{fill:var(--sheet);stroke:var(--ink);stroke-width:1.4} .blk.reg{fill:var(--chip)}
+.bt,.band,.stg{font-family:"Archivo Narrow","Arial Narrow","Helvetica Neue",Arial,sans-serif}
+.bt{font-weight:700;font-size:12.5px} .bs{font-size:8.5px;fill:var(--slate)} .pin{font-size:8px;fill:var(--slate)}
+.wl{font-size:8.5px} .cl{font-size:8.5px;fill:var(--ctl)} .sl{stroke:var(--ctl);stroke-width:1}
+.band{font-size:10px;font-weight:600;letter-spacing:.16em;fill:var(--slate)}
+.stg{font-size:11px;font-weight:700;letter-spacing:.2em;fill:var(--slate)}
+.mx{fill:var(--sheet);stroke:var(--ink);stroke-width:1.4} .mxn{font-size:7.5px;fill:var(--slate)}
+.w,.wn{fill:none;stroke:var(--ink);stroke-width:1.3} .w{marker-end:url(#mInk)}
+.c{fill:none;stroke:var(--ctl);stroke-width:1.2;stroke-dasharray:5 3} .c.w{marker-end:url(#mCtl)}
+.u{stroke:var(--unused);stroke-dasharray:1.5 3}
+.j{fill:var(--ink)} .cj{fill:var(--ctl)} .clk{fill:none;stroke:var(--ink);stroke-width:1.1}
+.flag{fill:var(--sheet);stroke:var(--slate);stroke-width:.9}
+.mkI{fill:var(--ink)} .mkC{fill:var(--ctl)} .mkA{fill:var(--ink)}
+.rule{stroke:var(--rule);stroke-width:1} .tick{stroke:var(--slate);stroke-width:1}
+</style>
+<defs>
+  <pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle class="dot" cx="6" cy="6" r="0.9"/></pattern>
+  <marker id="mInk" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.6L8,4L0,7.4z" class="mkI"/></marker>
+  <marker id="mCtl" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.6L8,4L0,7.4z" class="mkC"/></marker>
+  <marker id="mAmb" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.6L8,4L0,7.4z" class="mkA"/></marker>
+</defs>
+<rect class="bg" width="1300" height="800"/>
+<rect width="1300" height="800" fill="url(#dots)"/>
+
+<!-- sheet furniture -->
+<line class="rule" x1="0" y1="22" x2="1300" y2="22"/>
+<line class="rule" x1="0" y1="157" x2="1300" y2="157"/>
+<line class="rule" x1="0" y1="648" x2="1300" y2="648"/>
+<path class="tick" d="M270 6V22M628 6V22M990 6V22M1170 6V22"/>
+<text class="stg" x="135" y="16" text-anchor="middle">IF</text>
+<text class="stg" x="449" y="16" text-anchor="middle">ID</text>
+<text class="stg" x="809" y="16" text-anchor="middle">EX</text>
+<text class="stg" x="1080" y="16" text-anchor="middle">MEM</text>
+<text class="stg" x="1235" y="16" text-anchor="middle">WB</text>
+<text class="band" transform="translate(8,95) rotate(-90)" text-anchor="middle">CONTROL</text>
+<text class="band" transform="translate(8,240) rotate(-90)" text-anchor="middle">DATAPATH</text>
+<text class="band" transform="translate(8,752) rotate(-90)" text-anchor="middle">NEXT PC</text>
+
+<!-- ===== wires: fetch ===== -->
+<g><path class="w" d="M96 352H124"/><circle class="j" cx="110" cy="352" r="2.6"/></g>
+<g><path class="w" d="M110 352V228H256"/><text class="wl" x="114" y="224">if_pc</text></g>
+<g><path class="w" d="M110 352V584H124"/></g>
+<g><path class="w" d="M200 400H256"/><text class="wl" x="204" y="396">if_instr</text><path class="w" d="M284 400H334"/><text class="wl" x="288" y="396">id_instr</text></g>
+<g><path class="wn" d="M170 584H222"/><circle class="j" cx="222" cy="584" r="2.6"/><text class="wl" x="172" y="577">if_pc_plus4</text></g>
+<g><path class="w" d="M222 584H256"/></g>
+<g><path class="wn" d="M222 584V676"/><circle class="j" cx="222" cy="676" r="2.6"/></g>
+<g><path class="w" d="M222 676H138"/><text class="wl" x="146" y="671">if_pc_plus4</text></g>
+<g><path class="w" d="M222 676V708"/></g>
+
+<!-- ===== wires: decode ===== -->
+<g><path class="w" d="M354 256V136"/></g>
+<g><path class="wn" d="M394 256V242"/><circle class="j" cx="394" cy="242" r="2.6"/></g>
+<g><path class="w" d="M394 242V136"/></g>
+<g><path class="w" d="M434 256V136"/></g>
+<g><path class="w" d="M394 242H614"/><text class="wl" x="480" y="238">id_funct3</text></g>
+<g><path class="w" d="M284 228H614"/><text class="wl" x="288" y="224">id_pc</text></g>
+<g><path class="w" d="M454 302H490"/><text class="wl" x="458" y="298">id_rs1</text></g>
+<g><path class="w" d="M454 334H490"/><text class="wl" x="458" y="330">id_rs2</text></g>
+<g><path class="w" d="M572 302H614"/><text class="wl" x="576" y="298">id_rd1</text></g>
+<g><path class="w" d="M572 408H614"/><text class="wl" x="575" y="404">id_rd2</text></g>
+<g><path class="w" d="M454 474H607V372H614"/><text class="wl" x="458" y="470">id_imm</text></g>
+<g><path class="w" d="M454 548H614"/><text class="wl" x="458" y="544">id_rd</text></g>
+<g><path class="w" d="M284 584H614"/><text class="wl" x="288" y="580">id_pc_plus4</text></g>
+<g><path class="c w" d="M474 92H634V164"/><text class="cl" x="480" y="87">id_RegWrite … id_AluCtrl</text><path class="sl" d="M612 97L620 87"/><text class="cl" x="621" y="85">12</text></g>
+
+<!-- ===== wires: execute ===== -->
+<g><path class="w" d="M642 228H796V270H804"/><text class="wl" x="646" y="224">ex_pc</text></g>
+<g><path class="wn" d="M642 242H958"/><circle class="j" cx="958" cy="242" r="2.6"/><text class="wl" x="646" y="238">ex_funct3</text></g>
+<g><path class="w" d="M958 242H976"/></g>
+<g><path class="w" d="M958 242V452H924V462"/></g>
+<g><path class="w" d="M642 302H724"/><text class="wl" x="646" y="298">ex_rd1</text></g>
+<g><path class="w" d="M642 372H804"/><text class="wl" x="646" y="368">ex_imm</text></g>
+<g><path class="w" d="M642 408H748"/><text class="wl" x="646" y="404">ex_rd2</text></g>
+<g><path class="w" d="M642 548H976"/><text class="wl" x="646" y="544">ex_rd</text></g>
+<g><path class="w" d="M642 584H976"/><text class="wl" x="646" y="580">ex_pc_plus4</text></g>
+<g><path class="wn" d="M742 320H786"/><circle class="j" cx="786" cy="320" r="2.6"/></g>
+<g><path class="w" d="M786 320H804"/></g>
+<g><path class="w" d="M786 320V478H860"/><text class="wl" x="818" y="474">fwd_rd1</text></g>
+<g><path class="wn" d="M766 426H776"/><circle class="j" cx="776" cy="426" r="2.6"/></g>
+<g><path class="w" d="M776 426H804"/></g>
+<g><path class="wn" d="M776 426V518"/><circle class="j" cx="776" cy="518" r="2.6"/></g>
+<g><path class="w" d="M776 518H860"/></g>
+<g><path class="w" d="M776 518V566H976"/><text class="wl" x="822" y="562">fwd_rd2</text></g>
+<g><path class="w" d="M822 295H864"/><text class="wl" x="826" y="291">ex_opA</text></g>
+<g><path class="w" d="M822 400H864"/><text class="wl" x="826" y="396">ex_opB</text></g>
+<g><path class="wn" d="M944 347H966"/><circle class="j" cx="966" cy="347" r="2.6"/></g>
+<g><path class="w" d="M966 347H976"/></g>
+<g><path class="wn" d="M966 347V700"/><circle class="j" cx="966" cy="700" r="2.6"/></g>
+<g><path class="wn" d="M966 700H242"/><circle class="j" cx="242" cy="700" r="2.6"/><text class="wl" x="300" y="696">ex_alu_res</text></g>
+<g><path class="w" d="M242 700H138"/></g>
+<g><path class="w" d="M242 700V708"/></g>
+<g><path class="w" d="M966 700V760H282"/><text class="wl" x="300" y="756">ex_alu_res</text><path class="w" d="M232 760H138"/></g>
+<g><path class="wn" d="M905 534V690"/><circle class="j" cx="905" cy="690" r="2.6"/></g>
+<g><path class="w" d="M905 690V717H249"/><text class="wl" x="300" y="729">ex_cmp</text></g>
+<g><path class="w" d="M905 690H1040"/></g>
+<g><path class="w" d="M232 726V736H138"/></g>
+<g><path class="w" d="M120 718H12V352H24"/><text class="wl" x="28" y="713">next_pc</text></g>
+
+<!-- forwarding feedback lanes -->
+<g><path class="wn" d="M1004 347H1014"/><circle class="j" cx="1014" cy="347" r="2.6"/></g>
+<g><path class="wn" d="M1014 347V214"/><circle class="j" cx="1014" cy="214" r="2.6"/></g>
+<g><path class="w" d="M1014 214H700V426H748"/><circle class="j" cx="700" cy="320" r="2.6"/><path class="w" d="M700 320H724"/><text class="wl" x="916" y="210">mem_alu_res</text></g>
+<g><path class="wn" d="M1280 539H1292V602H712"/><circle class="j" cx="712" cy="602" r="2.6"/><text class="wl" x="1100" y="598">wb_data</text></g>
+<g><path class="w" d="M712 602H560V440"/></g>
+<g><path class="w" d="M712 602V338H724"/><circle class="j" cx="712" cy="444" r="2.6"/><path class="w" d="M712 444H748"/></g>
+
+<!-- ===== wires: memory ===== -->
+<g><path class="w" d="M1014 347H1040"/></g>
+<g><path class="w" d="M1014 347V470H1040"/></g>
+<g><path class="w" d="M1014 214H1156"/><text class="wl" x="1020" y="210">mem_alu_res</text></g>
+<g><path class="w" d="M1004 566H1024V400H1040"/><text class="wl" x="1028" y="560">mem_rd2</text></g>
+<g><path class="wn" d="M1004 242H1062"/><circle class="j" cx="1062" cy="242" r="2.6"/><text class="wl" x="1010" y="238">mem_funct3</text></g>
+<g><path class="w" d="M1062 242V300"/></g>
+<g><path class="w" d="M1062 242H1146V470H1130"/></g>
+<g><path class="w" d="M1085 420V446"/><text class="wl" x="1090" y="437">mem_dat</text></g>
+<g><path class="w" d="M1130 516H1156"/><text class="wl" x="1088" y="541">mem_load_data</text></g>
+<g><path class="w" d="M1004 548H1156"/><text class="wl" x="1030" y="544">mem_rd</text></g>
+<g><path class="w" d="M1004 584H1156"/><text class="wl" x="1030" y="580">mem_pc_plus4</text></g>
+
+<!-- ===== wires: write-back ===== -->
+<g><path class="w" d="M1184 214H1206V490H1262"/><text class="wl" x="1188" y="210">wb_alu_res</text></g>
+<g><path class="w" d="M1184 516H1262"/><text class="wl" x="1188" y="512">wb_load_data</text></g>
+<g><path class="w" d="M1184 584H1262"/><text class="wl" x="1198" y="580">wb_pc_plus4</text></g>
+<g><path class="w" d="M1184 548H1194V618H532V440"/><text class="wl" x="1198" y="562">wb_rd</text></g>
+
+<!-- ===== control lines ===== -->
+<g><path class="c w" d="M195 116V150H60V296"/><path class="c w" d="M195 150H622V164"/><path class="c w" d="M270 150V164"/><circle class="cj" cx="195" cy="150" r="2.4"/><circle class="cj" cx="270" cy="150" r="2.4"/><text class="cl" x="300" y="146">stall</text><text class="cl" x="56" y="290" text-anchor="end">~stall</text></g>
+<g><path class="c w" d="M642 172H976"/><text class="cl" x="764" y="168">ex_{RegWrite,MemWrite,MemToReg,Jump}</text></g>
+<g><path class="c w" d="M1004 172H1156"/><text class="cl" x="1008" y="168">mem_{RegWrite,MemToReg,Jump}</text></g>
+<g><path class="c w" d="M642 182H909V279"/><text class="cl" x="818" y="191">ex_AluCtrl</text></g>
+<g><path class="c w" d="M642 192H813V261"/><text class="cl" x="817" y="254">ex_AluSrcA</text></g>
+<g><path class="c w" d="M642 530H813V435"/><text class="cl" x="817" y="452">ex_AluSrc</text></g>
+<g><path class="c w" d="M733 124V295"/><text class="cl" x="729" y="286" text-anchor="end">fwd_a</text></g>
+<g><path class="c w" d="M757 124V401"/><text class="cl" x="753" y="392" text-anchor="end">fwd_b</text></g>
+<g><path class="c w" d="M1004 182H1106V300"/><text class="cl" x="1010" y="195">mem_MemWrite</text></g>
+<g><path class="c w" d="M1184 182H1267V481"/><text class="cl" transform="translate(1264,380) rotate(-90)" text-anchor="middle">wb_MemToReg</text></g>
+<g><path class="c w" d="M1184 192H1275V487"/><text class="cl" transform="translate(1285,380) rotate(-90)" text-anchor="middle">wb_Jump</text></g>
+<g><path class="c w" d="M1176 594V634H504V440"/><text class="cl" x="980" y="645">wb_RegWrite</text></g>
+<g><path class="c w" d="M1095 668V660H280V594"/><path class="c w" d="M620 660V594"/><circle class="cj" cx="620" cy="660" r="2.4"/><text class="cl" x="300" y="671">flush</text></g>
+<g><path class="c" d="M636 594V784"/><circle class="cj" cx="636" cy="784" r="2.4"/></g>
+<g><path class="c w" d="M636 784H129V770"/><text class="cl" x="150" y="797">{ex_Branch,ex_Jump}</text></g>
+<g><path class="c w" d="M636 784H1095V720"/></g>
+
+<!-- ===== blocks ===== -->
+<g><rect class="blk" x="24" y="296" width="72" height="96"/><text class="pin" x="60" y="306" text-anchor="middle">pc_en</text><text class="bt" x="60" y="324" text-anchor="middle">PC</text><text class="bs" x="60" y="335" text-anchor="middle">ad · PrgCo</text><text class="bs" x="60" y="345" text-anchor="middle">32 b</text><text class="pin" x="28" y="365">next_pc</text><text class="pin" x="92" y="349" text-anchor="end">pc</text><path class="clk" d="M55 392L60 386L65 392"/></g>
+<g><rect class="blk" x="124" y="296" width="76" height="128"/><text class="bt" x="162" y="318" text-anchor="middle">Instr ROM</text><text class="bs" x="162" y="330" text-anchor="middle">dc · ROME</text><text class="bs" x="162" y="341" text-anchor="middle">16384 × 32 b</text><text class="pin" x="128" y="364">PC[15:2]</text><text class="pin" x="196" y="412" text-anchor="end">IR</text></g>
+<g><rect class="blk" x="124" y="570" width="46" height="28"/><text class="bt" x="147" y="588" text-anchor="middle">+ 4</text></g>
+<g><rect class="blk reg" x="256" y="164" width="28" height="430"/><text class="bt" transform="translate(275,320) rotate(-90)" text-anchor="middle">IF/ID · 96 b</text><path class="clk" d="M266 594L270 588L274 594"/><title>IF/ID: id_pc, id_pc_plus4, id_instr. Holds on stall, clears on flush.</title></g>
+<g><rect class="blk" x="334" y="256" width="120" height="304"/>
+  <text class="pin" x="354" y="268" text-anchor="middle">opcode</text><text class="pin" x="394" y="268" text-anchor="middle">funct3</text><text class="pin" x="434" y="268" text-anchor="middle">funct7</text>
+  <text class="pin" x="354" y="278" text-anchor="middle">[6:0]</text><text class="pin" x="394" y="278" text-anchor="middle">[14:12]</text><text class="pin" x="434" y="278" text-anchor="middle">[31:25]</text>
+  <text class="bt" x="394" y="362" text-anchor="middle">Decoder</text><text class="bs" x="394" y="374" text-anchor="middle">tnt · decoder</text><text class="bs" x="394" y="385" text-anchor="middle">32 b in</text>
+  <text class="pin" x="338" y="412">instruction</text>
+  <text class="pin" x="450" y="314" text-anchor="end">rs1 [19:15]</text><text class="pin" x="450" y="346" text-anchor="end">rs2 [24:20]</text><text class="pin" x="450" y="486" text-anchor="end">imm (by format)</text><text class="pin" x="450" y="540" text-anchor="end">rd [11:7]</text></g>
+<g><rect class="blk" x="334" y="46" width="140" height="90"/><text class="bt" x="404" y="62" text-anchor="middle">Control</text><text class="bs" x="404" y="73" text-anchor="middle">pnp · control · 12 b out</text>
+  <text class="pin" x="404" y="89" text-anchor="middle">RegWrite AluSrc AluSrcA</text><text class="pin" x="404" y="99" text-anchor="middle">MemRead MemWrite MemToReg</text><text class="pin" x="404" y="109" text-anchor="middle">Branch Jump AluCtrl[3:0]</text>
+  <text class="pin" x="354" y="130" text-anchor="middle">Opcode</text><text class="pin" x="394" y="130" text-anchor="middle">funct3</text><text class="pin" x="434" y="130" text-anchor="middle">funct7</text></g>
+<g><rect class="blk" x="140" y="46" width="110" height="70"/><text class="bt" x="195" y="66" text-anchor="middle">Hazard</text><text class="bs" x="195" y="77" text-anchor="middle">hz · hazard</text><text class="bs" x="195" y="88" text-anchor="middle">load-use</text><text class="pin" x="195" y="111" text-anchor="middle">stall</text>
+  <g><path class="flag" d="M62 51H120L126 56L120 61H62Z"/><text class="pin" x="66" y="59">ex_MemRead</text><path class="w" d="M126 56H140"/></g>
+  <g><path class="flag" d="M62 65H120L126 70L120 75H62Z"/><text class="pin" x="66" y="73">ex_rd</text><path class="w" d="M126 70H140"/></g>
+  <g><path class="flag" d="M62 79H120L126 84L120 89H62Z"/><text class="pin" x="66" y="87">id_rs1</text><path class="w" d="M126 84H140"/></g>
+  <g><path class="flag" d="M62 93H120L126 98L120 103H62Z"/><text class="pin" x="66" y="101">id_rs2</text><path class="w" d="M126 98H140"/></g></g>
+<g><rect class="blk" x="490" y="284" width="82" height="156"/><text class="bt" x="531" y="366" text-anchor="middle">Registers</text><text class="bs" x="531" y="378" text-anchor="middle">npn · 32 × 32 b</text><text class="bs" x="531" y="389" text-anchor="middle">write-first</text>
+  <text class="pin" x="494" y="314">rs1</text><text class="pin" x="494" y="346">rs2</text><text class="pin" x="568" y="314" text-anchor="end">rd1</text><text class="pin" x="568" y="420" text-anchor="end">rd2</text>
+  <text class="pin" x="504" y="434" text-anchor="middle">we</text><text class="pin" x="532" y="434" text-anchor="middle">rd</text><text class="pin" x="560" y="434" text-anchor="middle">wd</text><path class="clk" d="M542 440L546 434L550 440"/></g>
+<g><rect class="blk reg" x="614" y="164" width="28" height="430"/><text class="bt" transform="translate(633,470) rotate(-90)" text-anchor="middle">ID/EX · 190 b</text><path class="clk" d="M624 594L628 588L632 594"/><title>ID/EX: ex_pc, ex_pc_plus4, ex_rd1, ex_rd2, ex_imm, ex_rs1, ex_rs2, ex_rd, ex_funct3, ex_AluCtrl and 8 one-bit controls. Bubbles on stall or flush.</title></g>
+<g><rect class="blk" x="690" y="46" width="140" height="78"/><text class="bt" x="760" y="64" text-anchor="middle">Forwarding</text><text class="bs" x="760" y="75" text-anchor="middle">fwd · forward · 2 × 2 b</text><text class="bs" x="760" y="86" text-anchor="middle">EX/MEM wins ties</text><text class="pin" x="733" y="108" text-anchor="middle">fwd_a</text><text class="pin" x="757" y="118" text-anchor="middle">fwd_b</text>
+  <g><path class="flag" d="M844 56L850 51H918V61H850Z"/><text class="pin" x="853" y="59">ex_rs1</text><path class="w" d="M844 56H830"/></g>
+  <g><path class="flag" d="M844 68L850 63H918V73H850Z"/><text class="pin" x="853" y="71">ex_rs2</text><path class="w" d="M844 68H830"/></g>
+  <g><path class="flag" d="M844 80L850 75H918V85H850Z"/><text class="pin" x="853" y="83">mem_rd</text><path class="w" d="M844 80H830"/></g>
+  <g><path class="flag" d="M844 92L850 87H918V97H850Z"/><text class="pin" x="853" y="95">wb_rd</text><path class="w" d="M844 92H830"/></g>
+  <g><path class="flag" d="M844 104L850 99H918V109H850Z"/><text class="pin" x="853" y="107">mem_RegWrite</text><path class="w" d="M844 104H830"/></g>
+  <g><path class="flag" d="M844 116L850 111H918V121H850Z"/><text class="pin" x="853" y="119">wb_RegWrite</text><path class="w" d="M844 116H830"/></g></g>
+<g><path class="mx" d="M724 290L742 300V340L724 350Z"/><text class="mxn" x="727" y="305">0</text><text class="mxn" x="727" y="323">1</text><text class="mxn" x="727" y="341">2</text></g>
+<g><path class="mx" d="M748 396L766 406V446L748 456Z"/><text class="mxn" x="751" y="411">0</text><text class="mxn" x="751" y="429">1</text><text class="mxn" x="751" y="447">2</text></g>
+<g><path class="mx" d="M804 256L822 266V324L804 334Z"/><text class="mxn" x="807" y="273">1</text><text class="mxn" x="807" y="323">0</text></g>
+<g><path class="mx" d="M804 360L822 370V430L804 440Z"/><text class="mxn" x="807" y="375">1</text><text class="mxn" x="807" y="429">0</text></g>
+<g><path class="blk" d="M864 262L944 292V402L864 432V360L878 347L864 334Z"/><text class="pin" x="909" y="300" text-anchor="middle">ALUCtrl</text><text class="bt" x="910" y="324" text-anchor="middle">ALU</text><text class="bs" x="910" y="335" text-anchor="middle">tsmc · ALU</text><text class="bs" x="906" y="358" text-anchor="middle">32 b</text><text class="pin" x="940" y="350" text-anchor="end">Res</text><text class="pin" x="868" y="298">OpA</text><text class="pin" x="868" y="403">OpB</text></g>
+<g><rect class="blk" x="860" y="462" width="90" height="72"/><text class="pin" x="924" y="473" text-anchor="middle">funct3</text><text class="pin" x="864" y="481">OpA</text><text class="bt" x="905" y="494" text-anchor="middle">Compare</text><text class="bs" x="905" y="505" text-anchor="middle">mph · comparator</text><text class="pin" x="864" y="521">OpB</text><text class="pin" x="905" y="530" text-anchor="middle">cmp</text></g>
+<g><rect class="blk reg" x="976" y="164" width="28" height="430"/><text class="bt" transform="translate(995,450) rotate(-90)" text-anchor="middle">EX/MEM · 109 b</text><path class="clk" d="M986 594L990 588L994 594"/><title>EX/MEM: mem_alu_res, mem_rd2, mem_pc_plus4, mem_rd, mem_funct3, mem_RegWrite, mem_MemWrite, mem_MemToReg, mem_Jump. mem_MemRead is declared but never loaded.</title></g>
+<g><rect class="blk" x="1040" y="300" width="90" height="120"/><text class="pin" x="1062" y="311" text-anchor="middle">funct3</text><text class="pin" x="1106" y="311" text-anchor="middle">write_ena</text><text class="pin" x="1044" y="343">addr</text><text class="bt" x="1085" y="362" text-anchor="middle">Data memory</text><text class="bs" x="1085" y="373" text-anchor="middle">meme · memory</text><text class="bs" x="1085" y="384" text-anchor="middle">256 × 32 b</text><text class="pin" x="1044" y="397">dat</text><text class="pin" x="1085" y="415" text-anchor="middle">mem_dat</text><path class="clk" d="M1111 420L1115 414L1119 420"/></g>
+<g><rect class="blk" x="1040" y="446" width="90" height="82"/><text class="pin" x="1085" y="457" text-anchor="middle">mem_dat</text><text class="pin" x="1044" y="474">addr_lo</text><text class="pin" x="1126" y="474" text-anchor="end">funct3</text><text class="bt" x="1085" y="492" text-anchor="middle">Load extend</text><text class="bs" x="1085" y="503" text-anchor="middle">ext · load_extend</text><text class="pin" x="1126" y="520" text-anchor="end">load_data</text></g>
+<g><rect class="blk reg" x="1156" y="164" width="28" height="430"/><text class="bt" transform="translate(1175,360) rotate(-90)" text-anchor="middle">MEM/WB · 104 b</text><path class="clk" d="M1162 594L1166 588L1170 594"/><title>MEM/WB: wb_alu_res, wb_load_data, wb_pc_plus4, wb_rd, wb_RegWrite, wb_MemToReg, wb_Jump.</title></g>
+<g><path class="mx" d="M1262 478L1280 490V588L1262 600Z"/><text class="mxn" x="1265" y="493">0</text><text class="mxn" x="1265" y="519">1</text><text class="mxn" x="1265" y="587">2</text></g>
+<g><path class="mx" d="M138 662V776L120 764V674Z"/><text class="mxn" x="136" y="679" text-anchor="end">00</text><text class="mxn" x="136" y="703" text-anchor="end">01</text><text class="mxn" x="136" y="739" text-anchor="end">10</text><text class="mxn" x="136" y="763" text-anchor="end">11</text></g>
+<g><path class="mx" d="M210 708H254L244 726H220Z"/><text class="mxn" x="222" y="718" text-anchor="middle">0</text><text class="mxn" x="242" y="718" text-anchor="middle">1</text></g>
+<g><rect class="blk" x="232" y="750" width="50" height="20"/><text class="pin" x="257" y="763" text-anchor="middle">&amp; ~32'd1</text></g>
+<g><rect class="blk" x="1040" y="668" width="110" height="52"/><text class="bt" x="1095" y="690" text-anchor="middle">Flush logic</text><text class="bs" x="1095" y="701" text-anchor="middle">glue · top.sv:141</text></g>
+<g>
+  <text class="band" x="970" y="40">TOP_WIRE OUTPUTS · TIED TO 0</text>
+  <g><text class="pin" x="980" y="73">0</text><path class="wn u" d="M987 70H1018"/><path class="flag" d="M1018 65H1112L1118 70L1112 75H1018Z"/><text class="pin" x="1022" y="73">dbg_pc[31:0]</text></g>
+  <g><text class="pin" x="980" y="91">0</text><path class="wn u" d="M987 88H1018"/><path class="flag" d="M1018 83H1112L1118 88L1112 93H1018Z"/><text class="pin" x="1022" y="91">dbg_instr[31:0]</text></g>
+  <g><text class="pin" x="980" y="109">0</text><path class="wn u" d="M987 106H1018"/><path class="flag" d="M1018 101H1112L1118 106L1112 111H1018Z"/><text class="pin" x="1022" y="109">dbg_reg_we</text></g>
+  <g><text class="pin" x="1138" y="73">0</text><path class="wn u" d="M1145 70H1176"/><path class="flag" d="M1176 65H1278L1284 70L1278 75H1176Z"/><text class="pin" x="1180" y="73">dbg_rd[4:0]</text></g>
+  <g><text class="pin" x="1138" y="91">0</text><path class="wn u" d="M1145 88H1176"/><path class="flag" d="M1176 83H1278L1284 88L1278 93H1176Z"/><text class="pin" x="1180" y="91">dbg_wb_data[31:0]</text></g>
+  <g><text class="pin" x="1138" y="109">0</text><path class="wn u" d="M1145 106H1176"/><path class="flag" d="M1176 101H1278L1284 106L1278 111H1176Z"/><text class="pin" x="1180" y="109">halt</text></g>
+</g>
+</svg>
